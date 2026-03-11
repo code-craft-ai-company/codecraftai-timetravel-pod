@@ -1,7 +1,7 @@
-=============================
-Automation Mojo - Time Travel
-=============================
-The 'automojo-timetravel' package provides on demand time travel debugging support.
+=================================
+Automation Mojo - Time Travel Pod
+=================================
+The 'automojo-timetravel-pod' package provides on demand time travel debugging support.
 
 =========================
 Features of this Template
