@@ -1,7 +1,7 @@
-=======================
-python-package-template
-=======================
-This is a template repository that can be used to quickly create a python package project.
+=============================
+Automation Mojo - Time Travel
+=============================
+The 'automojo-timetravel' package provides on demand time travel debugging support.
 
 =========================
 Features of this Template
