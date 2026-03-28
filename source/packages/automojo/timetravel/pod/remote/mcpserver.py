@@ -369,6 +369,7 @@ class McpServer:
         from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
         import json
         import mcp.types as types
+        from mcp.shared.message import SessionMessage
 
         async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
             producer_read, consumer_read = anyio.create_memory_object_stream(100)
@@ -382,7 +383,10 @@ class McpServer:
                             break
                         try:
                             msg = json.loads(line.decode('utf-8'))
-                            await producer_read.send(types.JSONRPCMessage.model_validate(msg))
+                            parsed_msg = types.JSONRPCMessage.model_validate(msg)
+                            await producer_read.send(
+                                SessionMessage(message=parsed_msg, metadata=None)
+                            )
                         except json.JSONDecodeError:
                             continue
                 except anyio.ClosedResourceError:
@@ -394,11 +398,13 @@ class McpServer:
                 try:
                     async with consumer_write:
                         async for msg in consumer_write:
-                            if hasattr(msg, "model_dump"):
-                                data = msg.model_dump(by_alias=True, exclude_none=True)
+                            # msg is a SessionMessage, we want to write msg.message
+                            msg_inner = getattr(msg, "message", msg)
+                            if hasattr(msg_inner, "model_dump"):
+                                data = msg_inner.model_dump(by_alias=True, exclude_none=True)
                                 writer.write((json.dumps(data) + "\n").encode('utf-8'))
                             else:
-                                writer.write((json.dumps(msg) + "\n").encode('utf-8'))
+                                writer.write((json.dumps(msg_inner) + "\n").encode('utf-8'))
                             await writer.drain()
                 finally:
                     writer.close()
@@ -453,6 +459,7 @@ class McpServer:
         import anyio
         import json
         import mcp.types as types
+        from mcp.shared.message import SessionMessage
 
         # Ensure the socket is removed if it already exists
         if os.path.exists(pipe_name):
@@ -473,7 +480,10 @@ class McpServer:
                             break
                         try:
                             msg = json.loads(line.decode('utf-8'))
-                            await producer_read.send(types.JSONRPCMessage.model_validate(msg))
+                            parsed_msg = types.JSONRPCMessage.model_validate(msg)
+                            await producer_read.send(
+                                SessionMessage(message=parsed_msg, metadata=None)
+                            )
                         except json.JSONDecodeError:
                             continue
                 except anyio.ClosedResourceError:
@@ -485,11 +495,12 @@ class McpServer:
                 try:
                     async with consumer_write:
                         async for msg in consumer_write:
-                            if hasattr(msg, "model_dump"):
-                                data = msg.model_dump(by_alias=True, exclude_none=True)
+                            msg_inner = getattr(msg, "message", msg)
+                            if hasattr(msg_inner, "model_dump"):
+                                data = msg_inner.model_dump(by_alias=True, exclude_none=True)
                                 writer.write((json.dumps(data) + "\n").encode('utf-8'))
                             else:
-                                writer.write((json.dumps(msg) + "\n").encode('utf-8'))
+                                writer.write((json.dumps(msg_inner) + "\n").encode('utf-8'))
                             await writer.drain()
                 finally:
                     writer.close()
