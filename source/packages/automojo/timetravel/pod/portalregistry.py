@@ -22,19 +22,21 @@ class PortalRegistry:
         self._portals: dict = {}
         return
 
-    def activate_portal(self, name: str, expression: str = None, once: bool = False) -> None:
+    def activate_portal(self, name: str, expression: str = None, once: bool = False, capture_id: str = None) -> None:
         """
             Activate a single portal by name.
 
             :param name: The portal name to activate.
             :param expression: Optional Python expression to dynamically determine tracing.
             :param once: If True, trace exactly once and deactivate the portal.
+            :param capture_id: Optional ID (file name) used for capture data.
         """
         with self._lock:
             self._portals[name] = {
                 "active": True,
                 "expression": expression,
                 "once": once,
+                "capture_id": capture_id,
             }
         return
 
@@ -48,7 +50,7 @@ class PortalRegistry:
             if name in self._portals:
                 self._portals[name]["active"] = False
             else:
-                self._portals[name] = {"active": False, "expression": None, "once": False}
+                self._portals[name] = {"active": False, "expression": None, "once": False, "capture_id": None}
         return
 
     def is_portal_active(self, name: str) -> bool:
@@ -92,6 +94,7 @@ class PortalRegistry:
                     "active": True,
                     "expression": None,
                     "once": False,
+                    "capture_id": None,
                 }
         return
 
@@ -108,7 +111,7 @@ class PortalRegistry:
         """
             List all registered portals and their activation state.
 
-            :returns: A list of dicts with 'name', 'active', 'expression', and 'once' keys.
+            :returns: A list of dicts with 'name', 'active', 'expression', 'once', and 'capture_id' keys.
         """
         with self._lock:
             rtnval = [
@@ -116,7 +119,8 @@ class PortalRegistry:
                     "name": name,
                     "active": info.get("active", False),
                     "expression": info.get("expression", None),
-                    "once": info.get("once", False)
+                    "once": info.get("once", False),
+                    "capture_id": info.get("capture_id", None)
                 }
                 for name, info in self._portals.items()
             ]

@@ -19,6 +19,10 @@ from automojo.timetravel.pod.tracehookmanager import TraceHookManager
 from automojo.timetravel.pod.traceevents import PortalEnterEvent
 from automojo.timetravel.pod.traceevents import PortalExitEvent
 from automojo.timetravel.pod.traceclock import get_trace_clock
+from automojo.timetravel.pod.backends.registry import create_default_registry
+from automojo.timetravel.pod.bufferedwriter import BufferedTraceWriter
+from automojo.timetravel.pod.traceserializer import TraceSerializer
+from automojo.timetravel.pod.tracerecorder import TraceRecorder
 
 
 class TimeTravelPortal:
@@ -116,10 +120,12 @@ class TimeTravelPortal:
             rtnval = self
             return rtnval
 
+        capture_id = portal_info.get("capture_id")
+
         # Create hook manager and install
         hook_manager = TraceHookManager(
             configuration=gateway.configuration,
-            record_callback=self._create_record_callback(gateway),
+            record_callback=self._create_record_callback(gateway, capture_id),
         )
 
         self._hook_manager = hook_manager
@@ -178,29 +184,70 @@ class TimeTravelPortal:
         rtnval = False
         return rtnval
 
-    def _create_record_callback(self, gateway):
+    def _create_record_callback(self, gateway, capture_id: Optional[str] = None):
         """
             Create a record callback that captures events.
 
-            For now, this creates a list-based collector. In integration with
-            the full system, this would delegate to a TraceRecorder.
+            If a capture_id (backend URI) is provided or if the gateway
+            has a backend_uri, it creates a real stream backend and trace recorder.
+            Otherwise it falls back to a list-based collector for testing.
 
             :param gateway: The active gateway.
+            :param capture_id: Optional URI string for dynamically creating a stream backend.
 
             :returns: A callable that accepts a TraceEvent.
         """
-        collected_events = []
+        backend_uri = capture_id or gateway.backend_uri
 
-        def record_callback(event):
-            collected_events.append(event)
-            return
+        if backend_uri:
+            # Create a real trace recorder
+            backend_registry = create_default_registry()
+            backend = backend_registry.create_backend(backend_uri)
+            serializer = TraceSerializer()
+            writer = BufferedTraceWriter(backend, max_buffer_size=65536)
 
-        # Store on the tracing state for access
-        state = get_tracing_state()
-        state.recorder = _ListRecorder(collected_events)
+            # We need a wrapper to convert `event` to `bytes` via serializer
+            class PortalRecorder(TraceRecorder):
+                def __init__(self, writer, serializer):
+                    self.writer = writer
+                    self.serializer = serializer
+                def record(self, event):
+                    data = self.serializer.serialize(event)
+                    self.writer.write(data)
+                def flush(self):
+                    self.writer.flush()
+                def close(self):
+                    self.writer.close()
 
-        rtnval = record_callback
-        return rtnval
+            recorder = PortalRecorder(writer, serializer)
+
+            # Register with gateway for cleanup on gateway exit
+            gateway.register_recorder(recorder)
+
+            def record_callback(event):
+                recorder.record(event)
+                return
+
+            # Store on the tracing state for access
+            state = get_tracing_state()
+            state.recorder = recorder
+
+            rtnval = record_callback
+            return rtnval
+        else:
+            # Fallback for when no backend is configured
+            collected_events = []
+
+            def record_callback(event):
+                collected_events.append(event)
+                return
+
+            # Store on the tracing state for access
+            state = get_tracing_state()
+            state.recorder = _ListRecorder(collected_events)
+
+            rtnval = record_callback
+            return rtnval
 
 
 class _ListRecorder:
