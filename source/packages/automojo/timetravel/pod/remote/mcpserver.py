@@ -13,6 +13,7 @@ import threading
 from typing import Any, Optional
 
 import mcp.server.stdio
+import mcp.types as types
 from mcp.server import Server
 
 import os
@@ -57,18 +58,18 @@ class McpServer:
         @self._server.list_tools()
         async def handle_list_tools() -> list:
             return [
-                {
-                    "name": "create_session",
-                    "description": "Create a new time travel session. Returns a session ID and creates a temporary directory for captures.",
-                    "inputSchema": {
+                types.Tool(
+                    name="create_session",
+                    description="Create a new time travel session. Returns a session ID and creates a temporary directory for captures.",
+                    inputSchema={
                         "type": "object",
                         "properties": {}
                     }
-                },
-                {
-                    "name": "list_captures",
-                    "description": "List all captures within a given session.",
-                    "inputSchema": {
+                ),
+                types.Tool(
+                    name="list_captures",
+                    description="List all captures within a given session.",
+                    inputSchema={
                         "type": "object",
                         "properties": {
                             "session_id": {
@@ -78,11 +79,11 @@ class McpServer:
                         },
                         "required": ["session_id"]
                     }
-                },
-                {
-                    "name": "query_capture",
-                    "description": "Query variables and states from a captured time travel trace.",
-                    "inputSchema": {
+                ),
+                types.Tool(
+                    name="query_capture",
+                    description="Query variables and states from a captured time travel trace.",
+                    inputSchema={
                         "type": "object",
                         "properties": {
                             "session_id": {
@@ -104,19 +105,19 @@ class McpServer:
                         },
                         "required": ["session_id", "capture_id"]
                     }
-                },
-                {
-                    "name": "list_portals",
-                    "description": "List all registered time travel portals and their activation state.",
-                    "inputSchema": {
+                ),
+                types.Tool(
+                    name="list_portals",
+                    description="List all registered time travel portals and their activation state.",
+                    inputSchema={
                         "type": "object",
                         "properties": {}
                     }
-                },
-                {
-                    "name": "activate_portal",
-                    "description": "Activate a time travel portal by name.",
-                    "inputSchema": {
+                ),
+                types.Tool(
+                    name="activate_portal",
+                    description="Activate a time travel portal by name.",
+                    inputSchema={
                         "type": "object",
                         "properties": {
                             "name": {
@@ -142,11 +143,11 @@ class McpServer:
                         },
                         "required": ["name"]
                     }
-                },
-                {
-                    "name": "deactivate_portal",
-                    "description": "Deactivate a time travel portal by name.",
-                    "inputSchema": {
+                ),
+                types.Tool(
+                    name="deactivate_portal",
+                    description="Deactivate a time travel portal by name.",
+                    inputSchema={
                         "type": "object",
                         "properties": {
                             "name": {
@@ -156,7 +157,7 @@ class McpServer:
                         },
                         "required": ["name"]
                     }
-                }
+                )
             ]
 
         @self._server.call_tool()

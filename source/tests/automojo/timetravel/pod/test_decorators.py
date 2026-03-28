@@ -60,7 +60,12 @@ class TestTracePortalDecorator(unittest.TestCase):
         self.assertEqual(async_func.__name__, "async_func")
         self.assertEqual(async_func.__doc__, "Async docstring.")
 
-        result = asyncio.get_event_loop().run_until_complete(async_func())
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            result = loop.run_until_complete(async_func())
+        finally:
+            loop.close()
         self.assertEqual(result, 42)
 
         return
