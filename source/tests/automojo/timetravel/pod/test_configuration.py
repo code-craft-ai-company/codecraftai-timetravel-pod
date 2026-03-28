@@ -32,6 +32,11 @@ class TestTimeTravelConfig(unittest.TestCase):
         self.assertIsNone(config.remote_credential)
         self.assertIsNone(config.service_url)
         self.assertIsNone(config.service_credential)
+        self.assertFalse(config.mcp_enabled)
+        self.assertEqual(config.mcp_transport, "stdio")
+        self.assertEqual(config.mcp_host, "0.0.0.0")
+        self.assertEqual(config.mcp_port, 9999)
+        self.assertIsNone(config.mcp_pipe)
 
         return
 
@@ -49,6 +54,11 @@ class TestTimeTravelConfig(unittest.TestCase):
             remote_enabled=True,
             remote_host="0.0.0.0",
             remote_port=8080,
+            mcp_enabled=True,
+            mcp_transport="pipe",
+            mcp_host="10.0.0.1",
+            mcp_port=10000,
+            mcp_pipe="/tmp/test.sock"
         )
 
         data = original.as_dict()
@@ -62,6 +72,11 @@ class TestTimeTravelConfig(unittest.TestCase):
         self.assertTrue(restored.trace_configuration.trace_calls)
         self.assertTrue(restored.trace_configuration.trace_lines)
         self.assertTrue(restored.trace_configuration.trace_variables)
+        self.assertTrue(restored.mcp_enabled)
+        self.assertEqual(restored.mcp_transport, "pipe")
+        self.assertEqual(restored.mcp_host, "10.0.0.1")
+        self.assertEqual(restored.mcp_port, 10000)
+        self.assertEqual(restored.mcp_pipe, "/tmp/test.sock")
 
         return
 
@@ -143,6 +158,8 @@ class TestConfigureTimetravel(unittest.TestCase):
         self.assertEqual(config.active_portals, [])
         self.assertIsNone(config.backend_uri)
         self.assertFalse(config.remote_enabled)
+        self.assertFalse(config.mcp_enabled)
+        self.assertEqual(config.mcp_transport, "stdio")
 
         return
 
