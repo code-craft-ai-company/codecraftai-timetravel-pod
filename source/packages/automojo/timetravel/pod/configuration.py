@@ -12,6 +12,8 @@ from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
 from automojo.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
 from automojo.timetravel.pod.portalregistry import get_portal_registry
 from automojo.timetravel.pod.backends.registry import create_default_registry
+from automojo.timetravel.pod.remote.server import RemoteControlServer
+from automojo.timetravel.pod.remote.mcpserver import McpServer
 
 
 class TimeTravelConfig:
@@ -26,6 +28,7 @@ class TimeTravelConfig:
         "_active_portals", "_trace_configuration", "_backend_uri",
         "_remote_enabled", "_remote_host", "_remote_port",
         "_remote_credential", "_service_url", "_service_credential",
+        "_mcp_enabled",
     )
 
     def __init__(
@@ -39,6 +42,7 @@ class TimeTravelConfig:
         remote_credential: Optional[str] = None,
         service_url: Optional[str] = None,
         service_credential: Optional[str] = None,
+        mcp_enabled: bool = False,
     ) -> None:
         """
             Create a TimeTravelConfig.
@@ -70,6 +74,7 @@ class TimeTravelConfig:
         self._remote_credential = remote_credential
         self._service_url = service_url
         self._service_credential = service_credential
+        self._mcp_enabled = mcp_enabled
         return
 
     @property
@@ -144,6 +149,14 @@ class TimeTravelConfig:
         rtnval = self._service_credential
         return rtnval
 
+    @property
+    def mcp_enabled(self) -> bool:
+        """
+            Whether the MCP server is enabled.
+        """
+        rtnval = self._mcp_enabled
+        return rtnval
+
     def as_dict(self) -> dict:
         """
             Serialize to a dictionary.
@@ -159,6 +172,7 @@ class TimeTravelConfig:
             "remote_enabled": self._remote_enabled,
             "remote_host": self._remote_host,
             "remote_port": self._remote_port,
+            "mcp_enabled": self._mcp_enabled,
         }
         return rtnval
 
@@ -184,19 +198,25 @@ class TimeTravelConfig:
             remote_enabled=data.get("remote_enabled", False),
             remote_host=data.get("remote_host", "127.0.0.1"),
             remote_port=data.get("remote_port", 9876),
+            mcp_enabled=data.get("mcp_enabled", False),
         )
         return rtnval
 
 
-def configure_timetravel(config: TimeTravelConfig) -> None:
+def configure_timetravel(config: TimeTravelConfig) -> dict:
     """
         Initialize the time travel pod with the given configuration.
 
-        Activates portals in the registry and optionally creates a stream
-        backend from the configured URI.
+        Activates portals in the registry, optionally creates a stream
+        backend from the configured URI, and starts remote/MCP servers
+        if enabled.
 
         :param config: The TimeTravelConfig to apply.
+
+        :returns: A dictionary of created server instances that should be kept alive.
     """
+    servers = {}
+
     # Activate portals
     registry = get_portal_registry()
     if config.active_portals:
@@ -207,5 +227,20 @@ def configure_timetravel(config: TimeTravelConfig) -> None:
         backend_registry = create_default_registry()
         backend_registry.create_backend(config.backend_uri)
 
-    # Start remote control server (if enabled) — deferred to Layer 5
-    return
+    # Start remote control server (if enabled)
+    if config.remote_enabled:
+        remote_server = RemoteControlServer(
+            host=config.remote_host,
+            port=config.remote_port,
+            credential=config.remote_credential
+        )
+        remote_server.start()
+        servers["remote"] = remote_server
+
+    # Start MCP server (if enabled)
+    if config.mcp_enabled:
+        mcp_server = McpServer()
+        mcp_server.start_background_stdio()
+        servers["mcp"] = mcp_server
+
+    return servers

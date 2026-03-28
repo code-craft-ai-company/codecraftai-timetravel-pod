@@ -7,6 +7,7 @@
 """
 
 import threading
+import sys
 
 from typing import Optional
 
@@ -30,15 +31,19 @@ class TimeTravelPortal:
         additional hooks.
     """
 
-    __slots__ = ("_name", "_activated_tracing", "_hook_manager")
+    __slots__ = ("_name", "_activated_tracing", "_hook_manager", "_expression", "_once")
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, expression: Optional[str] = None, once: bool = False) -> None:
         """
             Create a TimeTravelPortal.
 
             :param name: The name of this portal.
+            :param expression: An optional Python expression to evaluate dynamically.
+            :param once: If True, this portal will only activate tracing once and then deactivate itself.
         """
         self._name = name
+        self._expression = expression
+        self._once = once
         self._activated_tracing = False
         self._hook_manager: Optional[TraceHookManager] = None
         return
@@ -88,6 +93,21 @@ class TimeTravelPortal:
         if not registry.is_portal_active(self._name):
             rtnval = self
             return rtnval
+
+        if self._expression is not None:
+            try:
+                frame = sys._getframe(1)
+                result = eval(self._expression, frame.f_globals, frame.f_locals)
+                if not result:
+                    rtnval = self
+                    return rtnval
+            except Exception:
+                # If evaluation fails, do not activate tracing
+                rtnval = self
+                return rtnval
+
+        if self._once:
+            registry.deactivate_portal(self._name)
 
         # Activate tracing on this thread
         gateway = get_active_gateway()
