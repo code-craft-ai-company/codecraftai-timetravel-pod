@@ -66,6 +66,14 @@ class McpServer:
                             "name": {
                                 "type": "string",
                                 "description": "The name of the portal to activate."
+                            },
+                            "expression": {
+                                "type": "string",
+                                "description": "Optional Python expression evaluated against the portal's locals to conditionally activate tracing."
+                            },
+                            "once": {
+                                "type": "boolean",
+                                "description": "If true, deactivate the portal immediately after a single trace activation."
                             }
                         },
                         "required": ["name"]
@@ -97,8 +105,10 @@ class McpServer:
                 portal_name = arguments.get("name")
                 if not portal_name:
                     raise ValueError("Missing 'name' argument")
+                expression = arguments.get("expression")
+                once = arguments.get("once", False)
                 registry = get_portal_registry()
-                registry.activate_portal(portal_name)
+                registry.activate_portal(portal_name, expression=expression, once=once)
                 return [{"type": "text", "text": f"Activated portal: {portal_name}"}]
             elif name == "deactivate_portal":
                 portal_name = arguments.get("name")

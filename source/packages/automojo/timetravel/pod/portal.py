@@ -31,21 +31,18 @@ class TimeTravelPortal:
         additional hooks.
     """
 
-    __slots__ = ("_name", "_activated_tracing", "_hook_manager", "_expression", "_once")
+    __slots__ = ("_name", "_activated_tracing", "_hook_manager", "_deactivate_on_exit")
 
-    def __init__(self, name: str, expression: Optional[str] = None, once: bool = False) -> None:
+    def __init__(self, name: str) -> None:
         """
             Create a TimeTravelPortal.
 
             :param name: The name of this portal.
-            :param expression: An optional Python expression to evaluate dynamically.
-            :param once: If True, this portal will only activate tracing once and then deactivate itself.
         """
         self._name = name
-        self._expression = expression
-        self._once = once
         self._activated_tracing = False
         self._hook_manager: Optional[TraceHookManager] = None
+        self._deactivate_on_exit = False
         return
 
     @property
@@ -94,10 +91,14 @@ class TimeTravelPortal:
             rtnval = self
             return rtnval
 
-        if self._expression is not None:
+        portal_info = registry.get_portal_info(self._name)
+        expression = portal_info.get("expression")
+        once = portal_info.get("once", False)
+
+        if expression is not None:
             try:
                 frame = sys._getframe(1)
-                result = eval(self._expression, frame.f_globals, frame.f_locals)
+                result = eval(expression, frame.f_globals, frame.f_locals)
                 if not result:
                     rtnval = self
                     return rtnval
@@ -106,8 +107,8 @@ class TimeTravelPortal:
                 rtnval = self
                 return rtnval
 
-        if self._once:
-            registry.deactivate_portal(self._name)
+        if once:
+            self._deactivate_on_exit = True
 
         # Activate tracing on this thread
         gateway = get_active_gateway()
@@ -170,6 +171,9 @@ class TimeTravelPortal:
         finally:
             self._activated_tracing = False
             self._hook_manager = None
+            if self._deactivate_on_exit:
+                get_portal_registry().deactivate_portal(self._name)
+                self._deactivate_on_exit = False
 
         rtnval = False
         return rtnval

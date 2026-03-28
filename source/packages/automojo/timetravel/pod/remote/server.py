@@ -184,8 +184,10 @@ def _handle_activate_portal(server, params: dict) -> dict:
     if name is None:
         rtnval = {"status": "error", "message": "Missing 'name' parameter"}
         return rtnval
+    expression = params.get("expression")
+    once = params.get("once", False)
     registry = get_portal_registry()
-    registry.activate_portal(name)
+    registry.activate_portal(name, expression=expression, once=once)
     rtnval = {"status": "ok", "data": {"activated": name}}
     return rtnval
 
