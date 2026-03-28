@@ -21,6 +21,8 @@ import tempfile
 import uuid
 import glob
 import json
+import time
+import shutil
 
 from automojo.timetravel.pod.portalregistry import get_portal_registry
 from automojo.timetravel.pod.reader import TraceFileReader
@@ -49,7 +51,39 @@ class McpServer:
         self._thread: Optional[threading.Thread] = None
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._running = False
+        self._sessions: dict[str, dict[str, Any]] = {}
+        self._session_lock = threading.Lock()
+
+        self._cleanup_thread = threading.Thread(target=self._cleanup_sessions_loop, daemon=True)
+        self._cleanup_thread.start()
         return
+
+    def _cleanup_sessions_loop(self) -> None:
+        """
+            Background loop to clean up expired sessions.
+        """
+        while True:
+            time.sleep(60)  # Check every minute
+            now = time.time()
+            expired_sessions = []
+
+            with self._session_lock:
+                for session_id, info in self._sessions.items():
+                    if now > info["expires_at"]:
+                        expired_sessions.append(session_id)
+
+                dirs_to_clean = []
+                for session_id in expired_sessions:
+                    info = self._sessions.pop(session_id)
+                    dirs_to_clean.append((session_id, info["dir"]))
+
+            for session_id, session_dir in dirs_to_clean:
+                if os.path.exists(session_dir):
+                    try:
+                        shutil.rmtree(session_dir)
+                        logger.info("Cleaned up expired session: %s", session_id)
+                    except Exception as e:
+                        logger.error("Failed to clean up session directory %s: %s", session_dir, e)
 
     def _setup_tools(self) -> None:
         """
@@ -63,7 +97,44 @@ class McpServer:
                     description="Create a new time travel session. Returns a session ID and creates a temporary directory for captures.",
                     inputSchema={
                         "type": "object",
-                        "properties": {}
+                        "properties": {
+                            "timespan": {
+                                "type": "integer",
+                                "description": "Optional timespan in minutes to keep the session alive (max 1440, default 30)."
+                            }
+                        }
+                    }
+                ),
+                types.Tool(
+                    name="renew_session",
+                    description="Renew an existing time travel session, extending its expiration time.",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "session_id": {
+                                "type": "string",
+                                "description": "The session ID."
+                            },
+                            "timespan": {
+                                "type": "integer",
+                                "description": "Optional timespan in minutes to extend the session (max 1440, default 30)."
+                            }
+                        },
+                        "required": ["session_id"]
+                    }
+                ),
+                types.Tool(
+                    name="close_session",
+                    description="Close a time travel session immediately, deleting all stored captures.",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "session_id": {
+                                "type": "string",
+                                "description": "The session ID to close."
+                            }
+                        },
+                        "required": ["session_id"]
                     }
                 ),
                 types.Tool(
@@ -163,14 +234,77 @@ class McpServer:
         @self._server.call_tool()
         async def handle_call_tool(name: str, arguments: dict) -> list:
             if name == "create_session":
+                timespan = arguments.get("timespan", 30)
+                try:
+                    timespan = int(timespan)
+                except ValueError:
+                    raise ValueError("'timespan' must be an integer")
+                if timespan <= 0 or timespan > 1440:
+                    raise ValueError("'timespan' must be between 1 and 1440 minutes")
+
                 session_id = str(uuid.uuid4())
                 session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
                 os.makedirs(session_dir, exist_ok=True)
-                return [{"type": "text", "text": json.dumps({"session_id": session_id, "session_dir": session_dir})}]
+
+                expires_at = time.time() + (timespan * 60)
+                with self._session_lock:
+                    self._sessions[session_id] = {
+                        "dir": session_dir,
+                        "expires_at": expires_at
+                    }
+
+                return [{"type": "text", "text": json.dumps({"session_id": session_id, "session_dir": session_dir, "expires_at": expires_at})}]
+            elif name == "renew_session":
+                session_id = arguments.get("session_id")
+                if not session_id:
+                    raise ValueError("Missing 'session_id' argument")
+
+                timespan = arguments.get("timespan", 30)
+                try:
+                    timespan = int(timespan)
+                except ValueError:
+                    raise ValueError("'timespan' must be an integer")
+                if timespan <= 0 or timespan > 1440:
+                    raise ValueError("'timespan' must be between 1 and 1440 minutes")
+
+                with self._session_lock:
+                    if session_id not in self._sessions:
+                        raise ValueError(f"Session not found or expired: {session_id}")
+
+                    expires_at = time.time() + (timespan * 60)
+                    self._sessions[session_id]["expires_at"] = expires_at
+
+                return [{"type": "text", "text": json.dumps({"session_id": session_id, "expires_at": expires_at})}]
+            elif name == "close_session":
+                session_id = arguments.get("session_id")
+                if not session_id:
+                    raise ValueError("Missing 'session_id' argument")
+
+                with self._session_lock:
+                    if session_id not in self._sessions:
+                        raise ValueError(f"Session not found or already closed: {session_id}")
+
+                    info = self._sessions.pop(session_id)
+                    session_dir = info["dir"]
+
+                if os.path.exists(session_dir):
+                    try:
+                        shutil.rmtree(session_dir)
+                    except Exception as e:
+                        logger.error("Failed to clean up session directory %s: %s", session_dir, e)
+                        raise ValueError(f"Session closed but failed to clean up directory: {e}")
+
+                return [{"type": "text", "text": json.dumps({"session_id": session_id, "status": "closed"})}]
             elif name == "list_captures":
                 session_id = arguments.get("session_id")
                 if not session_id:
                     raise ValueError("Missing 'session_id' argument")
+
+                with self._session_lock:
+                    if session_id in self._sessions:
+                        # Implicitly renew for 30 minutes on use, or retain the existing longer expiration
+                        self._sessions[session_id]["expires_at"] = max(self._sessions[session_id]["expires_at"], time.time() + (30 * 60))
+
                 session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
                 if not os.path.exists(session_dir):
                     raise ValueError(f"Session directory not found: {session_dir}")
@@ -184,6 +318,11 @@ class McpServer:
 
                 if not session_id or not capture_id:
                     raise ValueError("Missing 'session_id' or 'capture_id' argument")
+
+                with self._session_lock:
+                    if session_id in self._sessions:
+                        # Implicitly renew for 30 minutes on use, or retain the existing longer expiration
+                        self._sessions[session_id]["expires_at"] = max(self._sessions[session_id]["expires_at"], time.time() + (30 * 60))
 
                 if not capture_id.endswith(".bin"):
                     capture_id += ".bin"
