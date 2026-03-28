@@ -15,7 +15,15 @@ from typing import Any, Optional
 import mcp.server.stdio
 from mcp.server import Server
 
+import os
+import tempfile
+import uuid
+import glob
+import json
+
 from automojo.timetravel.pod.portalregistry import get_portal_registry
+from automojo.timetravel.pod.reader import TraceFileReader
+from automojo.timetravel.pod.timeline import TimelineBuilder
 
 
 logger = logging.getLogger(__name__)
@@ -50,6 +58,54 @@ class McpServer:
         async def handle_list_tools() -> list:
             return [
                 {
+                    "name": "create_session",
+                    "description": "Create a new time travel session. Returns a session ID and creates a temporary directory for captures.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {}
+                    }
+                },
+                {
+                    "name": "list_captures",
+                    "description": "List all captures within a given session.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "session_id": {
+                                "type": "string",
+                                "description": "The session ID."
+                            }
+                        },
+                        "required": ["session_id"]
+                    }
+                },
+                {
+                    "name": "query_capture",
+                    "description": "Query variables and states from a captured time travel trace.",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "session_id": {
+                                "type": "string",
+                                "description": "The session ID."
+                            },
+                            "capture_id": {
+                                "type": "string",
+                                "description": "The capture ID."
+                            },
+                            "line_number": {
+                                "type": "integer",
+                                "description": "Optional line number to query state at."
+                            },
+                            "variable_name": {
+                                "type": "string",
+                                "description": "Optional variable name to query."
+                            }
+                        },
+                        "required": ["session_id", "capture_id"]
+                    }
+                },
+                {
                     "name": "list_portals",
                     "description": "List all registered time travel portals and their activation state.",
                     "inputSchema": {
@@ -74,6 +130,14 @@ class McpServer:
                             "once": {
                                 "type": "boolean",
                                 "description": "If true, deactivate the portal immediately after a single trace activation."
+                            },
+                            "capture_id": {
+                                "type": "string",
+                                "description": "Optional unique ID for the capture. If not provided, a random UUID will be generated."
+                            },
+                            "session_id": {
+                                "type": "string",
+                                "description": "Optional session ID for the capture. If provided, the capture will be stored in the session directory."
                             }
                         },
                         "required": ["name"]
@@ -97,7 +161,72 @@ class McpServer:
 
         @self._server.call_tool()
         async def handle_call_tool(name: str, arguments: dict) -> list:
-            if name == "list_portals":
+            if name == "create_session":
+                session_id = str(uuid.uuid4())
+                session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
+                os.makedirs(session_dir, exist_ok=True)
+                return [{"type": "text", "text": json.dumps({"session_id": session_id, "session_dir": session_dir})}]
+            elif name == "list_captures":
+                session_id = arguments.get("session_id")
+                if not session_id:
+                    raise ValueError("Missing 'session_id' argument")
+                session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
+                if not os.path.exists(session_dir):
+                    raise ValueError(f"Session directory not found: {session_dir}")
+                captures = [os.path.basename(f) for f in glob.glob(os.path.join(session_dir, "*.bin"))]
+                return [{"type": "text", "text": json.dumps({"captures": captures})}]
+            elif name == "query_capture":
+                session_id = arguments.get("session_id")
+                capture_id = arguments.get("capture_id")
+                line_number = arguments.get("line_number")
+                variable_name = arguments.get("variable_name")
+
+                if not session_id or not capture_id:
+                    raise ValueError("Missing 'session_id' or 'capture_id' argument")
+
+                if not capture_id.endswith(".bin"):
+                    capture_id += ".bin"
+
+                session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
+                capture_path = os.path.join(session_dir, capture_id)
+
+                if not os.path.exists(capture_path):
+                    raise ValueError(f"Capture file not found: {capture_path}")
+
+                builder = TimelineBuilder()
+                with TraceFileReader(capture_path) as reader:
+                    builder.add_events(reader.read_events())
+
+                timeline = builder.build()
+                results = []
+
+                # Find VariableSnapshot events
+                from automojo.timetravel.pod.traceevents import VariableSnapshotEvent
+                for event in timeline:
+                    if isinstance(event, VariableSnapshotEvent):
+                        if line_number is not None and event.lineno != line_number:
+                            continue
+
+                        locals_dict = event.local_variables
+                        if variable_name is not None:
+                            if variable_name in locals_dict:
+                                results.append({
+                                    "timestamp_ns": event.timestamp_ns,
+                                    "filename": event.filename,
+                                    "lineno": event.lineno,
+                                    "variable": variable_name,
+                                    "value": locals_dict[variable_name]
+                                })
+                        else:
+                            results.append({
+                                "timestamp_ns": event.timestamp_ns,
+                                "filename": event.filename,
+                                "lineno": event.lineno,
+                                "variables": locals_dict
+                            })
+
+                return [{"type": "text", "text": json.dumps({"results": results})}]
+            elif name == "list_portals":
                 registry = get_portal_registry()
                 portals = registry.list_portals()
                 return [{"type": "text", "text": str(portals)}]
@@ -107,9 +236,26 @@ class McpServer:
                     raise ValueError("Missing 'name' argument")
                 expression = arguments.get("expression")
                 once = arguments.get("once", False)
+                capture_id = arguments.get("capture_id")
+                session_id = arguments.get("session_id")
+
+                if session_id:
+                    if not capture_id:
+                        capture_id = str(uuid.uuid4())
+
+                    if not capture_id.endswith(".bin"):
+                        capture_id += ".bin"
+
+                    session_dir = os.path.join(tempfile.gettempdir(), f"automojo_session_{session_id}")
+                    if not os.path.exists(session_dir):
+                        os.makedirs(session_dir, exist_ok=True)
+
+                    capture_path = os.path.join(session_dir, capture_id)
+                    capture_id = f"file://{capture_path}"
+
                 registry = get_portal_registry()
-                registry.activate_portal(portal_name, expression=expression, once=once)
-                return [{"type": "text", "text": f"Activated portal: {portal_name}"}]
+                registry.activate_portal(portal_name, expression=expression, once=once, capture_id=capture_id)
+                return [{"type": "text", "text": f"Activated portal: {portal_name} with capture_id: {capture_id}"}]
             elif name == "deactivate_portal":
                 portal_name = arguments.get("name")
                 if not portal_name:
