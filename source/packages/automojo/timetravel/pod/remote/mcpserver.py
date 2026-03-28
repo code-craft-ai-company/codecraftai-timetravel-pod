@@ -341,6 +341,184 @@ class McpServer:
 
         return
 
+    def start_background_tcp(self, host: str, port: int) -> None:
+        """
+            Start the MCP server on a background thread using a TCP socket.
+        """
+        self._running = True
+
+        def _target() -> None:
+            self._loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self._loop)
+            try:
+                self._loop.run_until_complete(self._run_tcp_server(host, port))
+            except Exception as e:
+                logger.error("MCP Server TCP error: %s", e)
+            finally:
+                self._loop.close()
+
+        self._thread = threading.Thread(target=_target, daemon=True)
+        self._thread.start()
+        return
+
+    async def _run_tcp_server(self, host: str, port: int) -> None:
+        """
+            Internal coroutine to run the MCP server over a TCP socket.
+        """
+        import anyio
+        from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
+        import json
+        import mcp.types as types
+
+        async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+            producer_read, consumer_read = anyio.create_memory_object_stream(100)
+            producer_write, consumer_write = anyio.create_memory_object_stream(100)
+
+            async def _read_from_socket():
+                try:
+                    while True:
+                        line = await reader.readline()
+                        if not line:
+                            break
+                        try:
+                            msg = json.loads(line.decode('utf-8'))
+                            await producer_read.send(types.JSONRPCMessage.model_validate(msg))
+                        except json.JSONDecodeError:
+                            continue
+                except anyio.ClosedResourceError:
+                    pass
+                finally:
+                    producer_read.close()
+
+            async def _write_to_socket():
+                try:
+                    async with consumer_write:
+                        async for msg in consumer_write:
+                            if hasattr(msg, "model_dump"):
+                                data = msg.model_dump(by_alias=True, exclude_none=True)
+                                writer.write((json.dumps(data) + "\n").encode('utf-8'))
+                            else:
+                                writer.write((json.dumps(msg) + "\n").encode('utf-8'))
+                            await writer.drain()
+                finally:
+                    writer.close()
+                    await writer.wait_closed()
+
+            read_task = asyncio.create_task(_read_from_socket())
+            write_task = asyncio.create_task(_write_to_socket())
+
+            try:
+                await self._server.run(
+                    consumer_read,
+                    producer_write,
+                    self._server.create_initialization_options()
+                )
+            except Exception as e:
+                logger.error("Error in TCP client: %s", e)
+            finally:
+                read_task.cancel()
+                write_task.cancel()
+                writer.close()
+                await writer.wait_closed()
+
+        server = await asyncio.start_server(handle_client, host, port)
+        async with server:
+            await server.serve_forever()
+
+    def start_background_pipe(self, pipe_name: str) -> None:
+        """
+            Start the MCP server on a background thread using a named pipe / Unix domain socket.
+        """
+        self._running = True
+
+        def _target() -> None:
+            self._loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(self._loop)
+            try:
+                self._loop.run_until_complete(self._run_pipe_server(pipe_name))
+            except Exception as e:
+                logger.error("MCP Server Pipe error: %s", e)
+            finally:
+                self._loop.close()
+
+        self._thread = threading.Thread(target=_target, daemon=True)
+        self._thread.start()
+        return
+
+    async def _run_pipe_server(self, pipe_name: str) -> None:
+        """
+            Internal coroutine to run the MCP server over a named pipe / Unix domain socket.
+        """
+        import os
+        import anyio
+        import json
+        import mcp.types as types
+
+        # Ensure the socket is removed if it already exists
+        if os.path.exists(pipe_name):
+            try:
+                os.remove(pipe_name)
+            except OSError:
+                pass
+
+        async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+            producer_read, consumer_read = anyio.create_memory_object_stream(100)
+            producer_write, consumer_write = anyio.create_memory_object_stream(100)
+
+            async def _read_from_socket():
+                try:
+                    while True:
+                        line = await reader.readline()
+                        if not line:
+                            break
+                        try:
+                            msg = json.loads(line.decode('utf-8'))
+                            await producer_read.send(types.JSONRPCMessage.model_validate(msg))
+                        except json.JSONDecodeError:
+                            continue
+                except anyio.ClosedResourceError:
+                    pass
+                finally:
+                    producer_read.close()
+
+            async def _write_to_socket():
+                try:
+                    async with consumer_write:
+                        async for msg in consumer_write:
+                            if hasattr(msg, "model_dump"):
+                                data = msg.model_dump(by_alias=True, exclude_none=True)
+                                writer.write((json.dumps(data) + "\n").encode('utf-8'))
+                            else:
+                                writer.write((json.dumps(msg) + "\n").encode('utf-8'))
+                            await writer.drain()
+                finally:
+                    writer.close()
+                    await writer.wait_closed()
+
+            read_task = asyncio.create_task(_read_from_socket())
+            write_task = asyncio.create_task(_write_to_socket())
+
+            try:
+                await self._server.run(
+                    consumer_read,
+                    producer_write,
+                    self._server.create_initialization_options()
+                )
+            except Exception as e:
+                logger.error("Error in Pipe client: %s", e)
+            finally:
+                read_task.cancel()
+                write_task.cancel()
+                writer.close()
+                await writer.wait_closed()
+
+        if not hasattr(asyncio, "start_unix_server"):
+            raise NotImplementedError("Named pipes / Unix domain sockets are not supported on this platform.")
+
+        server = await asyncio.start_unix_server(handle_client, path=pipe_name)
+        async with server:
+            await server.serve_forever()
+
     def stop(self) -> None:
         """
             Stop the background MCP server if running.

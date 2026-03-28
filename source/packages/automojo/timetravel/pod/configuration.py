@@ -28,7 +28,7 @@ class TimeTravelConfig:
         "_active_portals", "_trace_configuration", "_backend_uri",
         "_remote_enabled", "_remote_host", "_remote_port",
         "_remote_credential", "_service_url", "_service_credential",
-        "_mcp_enabled",
+        "_mcp_enabled", "_mcp_transport", "_mcp_host", "_mcp_port", "_mcp_pipe",
     )
 
     def __init__(
@@ -43,6 +43,10 @@ class TimeTravelConfig:
         service_url: Optional[str] = None,
         service_credential: Optional[str] = None,
         mcp_enabled: bool = False,
+        mcp_transport: str = "stdio",
+        mcp_host: str = "0.0.0.0",
+        mcp_port: int = 9999,
+        mcp_pipe: Optional[str] = None,
     ) -> None:
         """
             Create a TimeTravelConfig.
@@ -56,6 +60,11 @@ class TimeTravelConfig:
             :param remote_credential: Credential for remote control authentication.
             :param service_url: URL for the time travel service.
             :param service_credential: Credential for the time travel service.
+            :param mcp_enabled: Whether to enable the MCP server.
+            :param mcp_transport: Transport for the MCP server ("stdio", "tcp", "pipe").
+            :param mcp_host: Host for the MCP server.
+            :param mcp_port: Port for the MCP server.
+            :param mcp_pipe: Named pipe (Unix socket path) for the MCP server.
         """
         if active_portals is not None:
             self._active_portals = active_portals
@@ -75,6 +84,10 @@ class TimeTravelConfig:
         self._service_url = service_url
         self._service_credential = service_credential
         self._mcp_enabled = mcp_enabled
+        self._mcp_transport = mcp_transport
+        self._mcp_host = mcp_host
+        self._mcp_port = mcp_port
+        self._mcp_pipe = mcp_pipe
         return
 
     @property
@@ -157,6 +170,38 @@ class TimeTravelConfig:
         rtnval = self._mcp_enabled
         return rtnval
 
+    @property
+    def mcp_transport(self) -> str:
+        """
+            Transport mechanism for the MCP server.
+        """
+        rtnval = self._mcp_transport
+        return rtnval
+
+    @property
+    def mcp_host(self) -> str:
+        """
+            Host for the MCP server.
+        """
+        rtnval = self._mcp_host
+        return rtnval
+
+    @property
+    def mcp_port(self) -> int:
+        """
+            Port for the MCP server.
+        """
+        rtnval = self._mcp_port
+        return rtnval
+
+    @property
+    def mcp_pipe(self) -> Optional[str]:
+        """
+            Named pipe (Unix socket path) for the MCP server.
+        """
+        rtnval = self._mcp_pipe
+        return rtnval
+
     def as_dict(self) -> dict:
         """
             Serialize to a dictionary.
@@ -173,6 +218,10 @@ class TimeTravelConfig:
             "remote_host": self._remote_host,
             "remote_port": self._remote_port,
             "mcp_enabled": self._mcp_enabled,
+            "mcp_transport": self._mcp_transport,
+            "mcp_host": self._mcp_host,
+            "mcp_port": self._mcp_port,
+            "mcp_pipe": self._mcp_pipe,
         }
         return rtnval
 
@@ -199,6 +248,10 @@ class TimeTravelConfig:
             remote_host=data.get("remote_host", "127.0.0.1"),
             remote_port=data.get("remote_port", 9876),
             mcp_enabled=data.get("mcp_enabled", False),
+            mcp_transport=data.get("mcp_transport", "stdio"),
+            mcp_host=data.get("mcp_host", "0.0.0.0"),
+            mcp_port=data.get("mcp_port", 9999),
+            mcp_pipe=data.get("mcp_pipe"),
         )
         return rtnval
 
@@ -240,7 +293,12 @@ def configure_timetravel(config: TimeTravelConfig) -> dict:
     # Start MCP server (if enabled)
     if config.mcp_enabled:
         mcp_server = McpServer()
-        mcp_server.start_background_stdio()
+        if config.mcp_transport == "tcp":
+            mcp_server.start_background_tcp(config.mcp_host, config.mcp_port)
+        elif config.mcp_transport == "pipe" and config.mcp_pipe:
+            mcp_server.start_background_pipe(config.mcp_pipe)
+        else:
+            mcp_server.start_background_stdio()
         servers["mcp"] = mcp_server
 
     return servers
