@@ -7,6 +7,7 @@
 """
 
 import threading
+import sys
 
 from typing import Optional
 
@@ -30,7 +31,7 @@ class TimeTravelPortal:
         additional hooks.
     """
 
-    __slots__ = ("_name", "_activated_tracing", "_hook_manager")
+    __slots__ = ("_name", "_activated_tracing", "_hook_manager", "_deactivate_on_exit")
 
     def __init__(self, name: str) -> None:
         """
@@ -41,6 +42,7 @@ class TimeTravelPortal:
         self._name = name
         self._activated_tracing = False
         self._hook_manager: Optional[TraceHookManager] = None
+        self._deactivate_on_exit = False
         return
 
     @property
@@ -88,6 +90,25 @@ class TimeTravelPortal:
         if not registry.is_portal_active(self._name):
             rtnval = self
             return rtnval
+
+        portal_info = registry.get_portal_info(self._name)
+        expression = portal_info.get("expression")
+        once = portal_info.get("once", False)
+
+        if expression is not None:
+            try:
+                frame = sys._getframe(1)
+                result = eval(expression, frame.f_globals, frame.f_locals)
+                if not result:
+                    rtnval = self
+                    return rtnval
+            except Exception:
+                # If evaluation fails, do not activate tracing
+                rtnval = self
+                return rtnval
+
+        if once:
+            self._deactivate_on_exit = True
 
         # Activate tracing on this thread
         gateway = get_active_gateway()
@@ -150,6 +171,9 @@ class TimeTravelPortal:
         finally:
             self._activated_tracing = False
             self._hook_manager = None
+            if self._deactivate_on_exit:
+                get_portal_registry().deactivate_portal(self._name)
+                self._deactivate_on_exit = False
 
         rtnval = False
         return rtnval
