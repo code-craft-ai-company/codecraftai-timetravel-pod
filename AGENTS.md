@@ -81,15 +81,26 @@ Features are organized into layers where each layer builds on the one below it.
 
 
 # Testing Conventions
-The 'automojo-timetravel-pod' package utilizes the 'unittest' test framework for unit testing because the package
-is designed to be integrated at a very low level into the software stack of an application or service.  Therefore,
-the code must prioritize:
+The 'automojo-timetravel-pod' package is shifting from the 'unittest' test framework to the 'testbase'
+single-host test framework (Phase 7 of the testbase / integration-runtime refactor). Because the package
+integrates at a very low level into the software stack of an application or service, the code must prioritize:
 
 *  debuggability over performance
 *  readability over conciseness
 
-This repository utilizes the 'unittest' test framework.  Detailed information about how to
-utilize the 'unittest' test framework with this code base are located in the [Testing Frameworks - UnitTest](userguide/10-04-01-testing-frameworks-unittest.rst)
+Converted tests live under 'source/testroots/automojo/tests/singlehost/timetravel/pod/' as module-level
+'def test_*' functions — a raised AssertionError is a Failure; any other exception is an Error. Because
+testbase tests have no setUp/tearDown, shared per-test setup is replicated through module-level helper
+functions invoked at the start of each test, with cleanup in a 'try'/'finally' block; 'unittest.mock' is
+still used for mocking, and async tests are wrapped with 'asyncio.run'. Run the converted suite with:
+
+```
+    testbase testing run --root source/testroots/automojo --includes=automojo.tests.singlehost.timetravel.pod --output=./.output
+```
+
+Until that converted suite is green-verified in a rehomed environment (the standalone testbase CLI lands
+with the Phase 2-tail relocation), the legacy 'unittest' suite under 'source/tests/' remains the
+authoritative suite that the merge gate runs; the two suites are kept in parallel during the shift.
 
 # Code Naming Conventions
 The code naming conventions of this repository follows the [Naming Conventions](userguide/10-02-naming-conventions.rst) document.

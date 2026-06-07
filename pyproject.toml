@@ -21,6 +21,7 @@ mcp = "^1.26.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"
+automojo-testbase = { git = "https://github.com/automationmojo/automojo-testbase.git", branch = "main" }
 
 [tool.poetry.group.dbio.dependencies]
 
