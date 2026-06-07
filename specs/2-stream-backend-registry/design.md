@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/backends/registry.py`
+`source/packages/ccai/timetravel/pod/backends/registry.py`
 
 ### Class Design
 
@@ -38,9 +38,9 @@ class StreamBackendRegistry:
 ### Built-in Factory Functions
 
 ```python
-from automojo.timetravel.pod.backends.filebackend import FileStreamBackend
-from automojo.timetravel.pod.backends.tcpbackend import TcpStreamBackend
-from automojo.timetravel.pod.backends.unixbackend import UnixStreamBackend
+from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
+from ccai.timetravel.pod.backends.tcpbackend import TcpStreamBackend
+from ccai.timetravel.pod.backends.unixbackend import UnixStreamBackend
 
 
 def _create_file_backend(parsed) -> FileStreamBackend:

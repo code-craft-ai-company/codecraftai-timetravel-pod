@@ -3,12 +3,12 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/timeline.py`
+`source/packages/ccai/timetravel/pod/timeline.py`
 
 ### Class Design
 
 ```python
-from automojo.timetravel.pod.traceevents import TraceEvent
+from ccai.timetravel.pod.traceevents import TraceEvent
 
 
 class TimelineBuilder:

@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/remote/registration.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/remote/registration.py`
 - [x] 2. Implement `ServiceRegistration.__init__` with service URL, credentials, remote info
 - [x] 3. Implement `register()` — send JSON POST to `/register` endpoint
 - [x] 4. Implement `unregister()` — send JSON POST to `/unregister` endpoint
@@ -10,7 +10,7 @@
 
 ## Testing Tasks
 
-- [x] 6. Create test file `source/tests/automojo/timetravel/pod/remote/test_registration.py`
+- [x] 6. Create test file `source/tests/ccai/timetravel/pod/remote/test_registration.py`
 - [x] 7. Test: `register()` sends correct payload (using mock HTTP server)
 - [x] 8. Test: `unregister()` sends correct payload
 - [x] 9. Test: registration failure is caught and returns `False`

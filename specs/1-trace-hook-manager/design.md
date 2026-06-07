@@ -3,18 +3,18 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/tracehookmanager.py`
+`source/packages/ccai/timetravel/pod/tracehookmanager.py`
 
 ### Class Design
 
 ```python
 import sys
 import threading
-from automojo.timetravel.pod.traceevents import (
+from ccai.timetravel.pod.traceevents import (
     CallEvent, ReturnEvent, LineEvent, VariableSnapshotEvent, ExceptionEvent
 )
-from automojo.timetravel.pod.traceclock import get_trace_clock
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
 
 
 class TraceHookManager:

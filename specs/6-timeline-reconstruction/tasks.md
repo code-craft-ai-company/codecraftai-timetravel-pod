@@ -2,13 +2,13 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/timeline.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/timeline.py`
 - [x] 2. Implement `TimelineBuilder` with `add_events()` and `build()`
 - [x] 3. Implement filtering by thread_id, event_types, start_ns, end_ns
 
 ## Testing Tasks
 
-- [x] 4. Create test file `source/tests/automojo/timetravel/pod/test_timeline.py`
+- [x] 4. Create test file `source/tests/ccai/timetravel/pod/test_timeline.py`
 - [x] 5. Test: events from a single source are returned sorted by timestamp
 - [x] 6. Test: events from multiple sources merge into sorted timeline
 - [x] 7. Test: thread_id filter returns only matching events

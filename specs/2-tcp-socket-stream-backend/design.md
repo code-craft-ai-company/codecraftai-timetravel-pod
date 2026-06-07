@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/backends/tcpbackend.py`
+`source/packages/ccai/timetravel/pod/backends/tcpbackend.py`
 
 ### Class Design
 

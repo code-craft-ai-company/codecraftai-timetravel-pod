@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/traceconfiguration.py`
+`source/packages/ccai/timetravel/pod/traceconfiguration.py`
 
 ### Class Design
 

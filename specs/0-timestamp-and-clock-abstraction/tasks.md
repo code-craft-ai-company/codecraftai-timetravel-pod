@@ -2,14 +2,14 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/traceclock.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/traceclock.py`
 - [x] 2. Implement the `TraceClock` class with `start()`, `stop()`, `timestamp()`, and `is_running`
 - [x] 3. Create the module-level singleton `_trace_clock` and `get_trace_clock()` accessor
 - [x] 4. Export public symbols from the module
 
 ## Testing Tasks
 
-- [x] 5. Create test file `source/tests/automojo/timetravel/pod/test_traceclock.py`
+- [x] 5. Create test file `source/tests/ccai/timetravel/pod/test_traceclock.py`
 - [x] 6. Test: `timestamp()` before `start()` raises `RuntimeError`
 - [x] 7. Test: after `start()`, `timestamp()` returns a non-negative integer
 - [x] 8. Test: two successive `timestamp()` calls return non-decreasing values

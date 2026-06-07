@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/portal.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/portal.py`
 - [x] 2. Implement `TimeTravelPortal.__init__` with name, activated flag, hook manager reference
 - [x] 3. Implement `__enter__` — gateway check, nested check, activation check, tracing setup
 - [x] 4. Implement `__exit__` — nested depth decrement or full teardown with hook uninstall, flush, state reset
@@ -11,7 +11,7 @@
 
 ## Testing Tasks
 
-- [x] 7. Create test file `source/tests/automojo/timetravel/pod/test_portal.py`
+- [x] 7. Create test file `source/tests/ccai/timetravel/pod/test_portal.py`
 - [x] 8. Test: entering an activated portal on a clean thread activates tracing
 - [x] 9. Test: entering an inactive portal is a no-op (no tracing state change)
 - [x] 10. Test: entering a portal when gateway is not active is a no-op

@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/traceconfiguration.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/traceconfiguration.py`
 - [x] 2. Implement the `TraceConfiguration` class with `__slots__`, private backing fields, and read-only properties
 - [x] 3. Implement `as_dict()` conversion method
 - [x] 4. Implement `from_dict()` classmethod for deserialization
@@ -11,7 +11,7 @@
 
 ## Testing Tasks
 
-- [x] 7. Create test file `source/tests/automojo/timetravel/pod/test_traceconfiguration.py`
+- [x] 7. Create test file `source/tests/ccai/timetravel/pod/test_traceconfiguration.py`
 - [x] 8. Test: default construction yields `trace_calls=True`, all others `False`
 - [x] 9. Test: explicit construction with all flags set preserves values
 - [x] 10. Test: properties are read-only (setting raises `AttributeError`)

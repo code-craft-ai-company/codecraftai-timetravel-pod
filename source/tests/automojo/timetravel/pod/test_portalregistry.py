@@ -5,8 +5,8 @@
 import threading
 import unittest
 
-from automojo.timetravel.pod.portalregistry import PortalRegistry
-from automojo.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.portalregistry import PortalRegistry
+from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 
 class TestPortalRegistry(unittest.TestCase):

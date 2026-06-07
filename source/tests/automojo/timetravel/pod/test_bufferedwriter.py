@@ -5,8 +5,8 @@
 import io
 import unittest
 
-from automojo.timetravel.pod.bufferedwriter import BufferedTraceWriter
-from automojo.timetravel.pod.bufferedwriter import DEFAULT_BUFFER_SIZE
+from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter
+from ccai.timetravel.pod.bufferedwriter import DEFAULT_BUFFER_SIZE
 
 
 class MockStream:

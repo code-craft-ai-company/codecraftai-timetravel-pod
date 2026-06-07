@@ -4,8 +4,8 @@
 
 import unittest
 
-from automojo.timetravel.pod.tracerecorder import TraceRecorder
-from automojo.timetravel.pod.traceevents import TraceEvent
+from ccai.timetravel.pod.tracerecorder import TraceRecorder
+from ccai.timetravel.pod.traceevents import TraceEvent
 
 
 class TestTraceRecorder(unittest.TestCase):

@@ -2,8 +2,8 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the `source/packages/automojo/timetravel/pod/backends/` package with `__init__.py`
-- [x] 2. Create the module `source/packages/automojo/timetravel/pod/backends/filebackend.py`
+- [x] 1. Create the `source/packages/ccai/timetravel/pod/backends/` package with `__init__.py`
+- [x] 2. Create the module `source/packages/ccai/timetravel/pod/backends/filebackend.py`
 - [x] 3. Implement `FileStreamBackend.__init__` with path, append, max_file_size, and parent directory creation
 - [x] 4. Implement `write()` with byte counting and rotation trigger
 - [x] 5. Implement `_rotate()` for size-based file rotation
@@ -12,7 +12,7 @@
 
 ## Testing Tasks
 
-- [x] 8. Create test file `source/tests/automojo/timetravel/pod/backends/test_filebackend.py`
+- [x] 8. Create test file `source/tests/ccai/timetravel/pod/backends/test_filebackend.py`
 - [x] 9. Test: writing data creates a file at the specified path
 - [x] 10. Test: data written can be read back from the file
 - [x] 11. Test: with rotation enabled, exceeding max size creates rotated file

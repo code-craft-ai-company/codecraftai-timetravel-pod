@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/traceevents.py`
+`source/packages/ccai/timetravel/pod/traceevents.py`
 
 ### Event Type Constants
 

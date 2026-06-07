@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/traceserializer.py`
+`source/packages/ccai/timetravel/pod/traceserializer.py`
 
 ### Wire Format
 

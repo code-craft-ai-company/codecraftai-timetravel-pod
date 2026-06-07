@@ -3,13 +3,13 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/tracerecorder.py`
+`source/packages/ccai/timetravel/pod/tracerecorder.py`
 
 ### Abstract Base Class
 
 ```python
 from abc import ABC, abstractmethod
-from automojo.timetravel.pod.traceevents import TraceEvent
+from ccai.timetravel.pod.traceevents import TraceEvent
 
 
 class TraceRecorder(ABC):

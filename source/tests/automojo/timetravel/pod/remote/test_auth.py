@@ -4,7 +4,7 @@
 
 import unittest
 
-from automojo.timetravel.pod.remote.auth import verify_credential
+from ccai.timetravel.pod.remote.auth import verify_credential
 
 
 class TestVerifyCredential(unittest.TestCase):

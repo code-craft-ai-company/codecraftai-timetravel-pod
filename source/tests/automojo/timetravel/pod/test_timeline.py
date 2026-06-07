@@ -5,11 +5,11 @@
 import threading
 import unittest
 
-from automojo.timetravel.pod.timeline import TimelineBuilder
-from automojo.timetravel.pod.traceevents import CallEvent
-from automojo.timetravel.pod.traceevents import LineEvent
-from automojo.timetravel.pod.traceevents import ReturnEvent
-from automojo.timetravel.pod.traceevents import EventType
+from ccai.timetravel.pod.timeline import TimelineBuilder
+from ccai.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.traceevents import ReturnEvent
+from ccai.timetravel.pod.traceevents import EventType
 
 
 class TestTimelineBuilder(unittest.TestCase):

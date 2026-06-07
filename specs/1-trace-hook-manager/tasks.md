@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/tracehookmanager.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/tracehookmanager.py`
 - [x] 2. Implement `TraceHookManager.__init__` — cache config flags, clock, thread ID, record callback
 - [x] 3. Implement `install()` and `uninstall()` methods wrapping `sys.settrace`
 - [x] 4. Implement `_trace_function` — dispatch `call`, `return`, `line`, `exception` events
@@ -11,7 +11,7 @@
 
 ## Testing Tasks
 
-- [x] 7. Create test file `source/tests/automojo/timetravel/pod/test_tracehookmanager.py`
+- [x] 7. Create test file `source/tests/ccai/timetravel/pod/test_tracehookmanager.py`
 - [x] 8. Test: installing the hook and calling a function produces `CallEvent` and `ReturnEvent`
 - [x] 9. Test: with `trace_lines=True`, executing code produces `LineEvent` objects
 - [x] 10. Test: with `trace_lines=False`, no `LineEvent` objects are produced

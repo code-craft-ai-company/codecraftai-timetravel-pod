@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/remote/heartbeat.py`
+`source/packages/ccai/timetravel/pod/remote/heartbeat.py`
 
 ### Class Design
 

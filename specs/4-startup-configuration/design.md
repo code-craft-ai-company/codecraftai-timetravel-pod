@@ -3,12 +3,12 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/configuration.py`
+`source/packages/ccai/timetravel/pod/configuration.py`
 
 ### Config Model
 
 ```python
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration, DEFAULT_TRACE_CONFIGURATION
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration, DEFAULT_TRACE_CONFIGURATION
 
 
 class TimeTravelConfig:
@@ -112,8 +112,8 @@ class TimeTravelConfig:
 ### Bootstrap Function
 
 ```python
-from automojo.timetravel.pod.portalregistry import get_portal_registry
-from automojo.timetravel.pod.backends.registry import create_default_registry
+from ccai.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.backends.registry import create_default_registry
 
 
 def configure_timetravel(config: TimeTravelConfig) -> None:

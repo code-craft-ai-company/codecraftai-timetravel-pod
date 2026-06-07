@@ -24,7 +24,7 @@ The `TraceRecorder` shall define an abstract method `close()` that finalizes the
 any held resources (file handles, sockets).
 
 ### REQ-1.2.4
-The `TraceRecorder` shall be importable from `automojo.timetravel.pod` internal modules and usable as
+The `TraceRecorder` shall be importable from `ccai.timetravel.pod` internal modules and usable as
 a type annotation for the record callback.
 
 ## Acceptance Criteria

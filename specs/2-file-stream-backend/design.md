@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/backends/filebackend.py`
+`source/packages/ccai/timetravel/pod/backends/filebackend.py`
 
 ### Class Design
 
@@ -62,7 +62,7 @@ class FileStreamBackend:
 
 Stream backends are placed in a `backends` sub-package:
 ```
-source/packages/automojo/timetravel/pod/backends/
+source/packages/ccai/timetravel/pod/backends/
     __init__.py
     file_backend.py
     tcp_backend.py

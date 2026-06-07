@@ -3,14 +3,14 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/reader.py`
+`source/packages/ccai/timetravel/pod/reader.py`
 
 ### Class Design
 
 ```python
 import io
-from automojo.timetravel.pod.traceserializer import TraceDeserializer, ENVELOPE_SIZE
-from automojo.timetravel.pod.traceevents import TraceEvent
+from ccai.timetravel.pod.traceserializer import TraceDeserializer, ENVELOPE_SIZE
+from ccai.timetravel.pod.traceevents import TraceEvent
 
 
 class TraceFileReader:

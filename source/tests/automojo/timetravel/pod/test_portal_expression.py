@@ -2,11 +2,11 @@ import unittest
 import threading
 import sys
 
-from automojo.timetravel.pod.portal import TimeTravelPortal
-from automojo.timetravel.pod.portalregistry import get_portal_registry
-from automojo.timetravel.pod.tracingstate import get_tracing_state, set_gateway_active
-from automojo.timetravel.pod.gateway import TimeTravelGateway, set_active_gateway
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.portal import TimeTravelPortal
+from ccai.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.tracingstate import get_tracing_state, set_gateway_active
+from ccai.timetravel.pod.gateway import TimeTravelGateway, set_active_gateway
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
 
 class TestPortalExpressionAndOnce(unittest.TestCase):
     def setUp(self):

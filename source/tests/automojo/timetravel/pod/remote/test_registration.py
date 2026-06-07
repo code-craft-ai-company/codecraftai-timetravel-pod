@@ -10,7 +10,7 @@ import unittest
 import uuid
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from automojo.timetravel.pod.remote.registration import ServiceRegistration
+from ccai.timetravel.pod.remote.registration import ServiceRegistration
 
 
 class MockServiceHandler(BaseHTTPRequestHandler):

@@ -10,8 +10,8 @@ import time
 import unittest
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-from automojo.timetravel.pod.remote.heartbeat import HeartbeatSender
-from automojo.timetravel.pod.remote.heartbeat import DEFAULT_HEARTBEAT_INTERVAL
+from ccai.timetravel.pod.remote.heartbeat import HeartbeatSender
+from ccai.timetravel.pod.remote.heartbeat import DEFAULT_HEARTBEAT_INTERVAL
 
 
 class MockHeartbeatHandler(BaseHTTPRequestHandler):

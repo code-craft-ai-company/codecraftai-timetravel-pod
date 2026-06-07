@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/remote/auth.py`
+`source/packages/ccai/timetravel/pod/remote/auth.py`
 
 ### Authentication Function
 
@@ -31,7 +31,7 @@ def verify_credential(provided: str | None, expected: str | None) -> bool:
 The `_dispatch` method in `RemoteControlServer` calls `verify_credential` before routing:
 
 ```python
-from automojo.timetravel.pod.remote.auth import verify_credential
+from ccai.timetravel.pod.remote.auth import verify_credential
 
 def _dispatch(self, request: dict) -> dict:
     token = request.get("token")

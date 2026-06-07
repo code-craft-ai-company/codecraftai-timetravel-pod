@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/traceserializer.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/traceserializer.py`
 - [x] 2. Define the `ENVELOPE_FORMAT` and `ENVELOPE_SIZE` constants
 - [x] 3. Implement `TraceSerializer.__init__` with pre-compiled `struct.Struct`
 - [x] 4. Implement `TraceSerializer._extract_payload` with per-event-type payload mapping
@@ -17,7 +17,7 @@
 
 ## Testing Tasks
 
-- [x] 13. Create test file `source/tests/automojo/timetravel/pod/test_traceserializer.py`
+- [x] 13. Create test file `source/tests/ccai/timetravel/pod/test_traceserializer.py`
 - [x] 14. Test: `CallEvent` round-trips through serialize → deserialize with all fields preserved
 - [x] 15. Test: `ReturnEvent` round-trips correctly, including `return_value`
 - [x] 16. Test: `LineEvent` produces a zero-length payload

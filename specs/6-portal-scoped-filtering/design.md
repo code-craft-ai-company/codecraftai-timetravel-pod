@@ -3,12 +3,12 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/portalfilter.py`
+`source/packages/ccai/timetravel/pod/portalfilter.py`
 
 ### Function Design
 
 ```python
-from automojo.timetravel.pod.traceevents import (
+from ccai.timetravel.pod.traceevents import (
     TraceEvent, PortalEnterEvent, PortalExitEvent, EventType,
 )
 

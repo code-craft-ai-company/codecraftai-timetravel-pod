@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/tracingstate.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/tracingstate.py`
 - [x] 2. Implement the `TracingState` class with fields: `is_tracing`, `recorder`, `portal_depth`, `active_portal_name` and a `reset()` method
 - [x] 3. Create the module-level `threading.local()` instance `_thread_local`
 - [x] 4. Implement the `get_tracing_state()` function with lazy initialization
@@ -11,7 +11,7 @@
 
 ## Testing Tasks
 
-- [x] 7. Create test file `source/tests/automojo/timetravel/pod/test_tracingstate.py`
+- [x] 7. Create test file `source/tests/ccai/timetravel/pod/test_tracingstate.py`
 - [x] 8. Test: default `TracingState` initialization has correct defaults
 - [x] 9. Test: `get_tracing_state()` returns the same instance on repeated calls from the same thread
 - [x] 10. Test: `get_tracing_state()` returns different instances for different threads

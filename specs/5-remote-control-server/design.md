@@ -3,12 +3,12 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/remote/server.py`
+`source/packages/ccai/timetravel/pod/remote/server.py`
 
 ### Package Structure
 
 ```
-source/packages/automojo/timetravel/pod/remote/
+source/packages/ccai/timetravel/pod/remote/
     __init__.py
     server.py
     auth.py
