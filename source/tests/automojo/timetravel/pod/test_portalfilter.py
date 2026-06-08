@@ -5,11 +5,11 @@
 import threading
 import unittest
 
-from automojo.timetravel.pod.portalfilter import filter_by_portal
-from automojo.timetravel.pod.traceevents import PortalEnterEvent
-from automojo.timetravel.pod.traceevents import PortalExitEvent
-from automojo.timetravel.pod.traceevents import LineEvent
-from automojo.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.portalfilter import filter_by_portal
+from ccai.timetravel.pod.traceevents import PortalEnterEvent
+from ccai.timetravel.pod.traceevents import PortalExitEvent
+from ccai.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.traceevents import CallEvent
 
 
 class TestFilterByPortal(unittest.TestCase):

@@ -10,7 +10,7 @@ import tempfile
 import threading
 import unittest
 
-from automojo.timetravel.pod.backends.unixbackend import UnixStreamBackend
+from ccai.timetravel.pod.backends.unixbackend import UnixStreamBackend
 
 
 class UnixTestServer:

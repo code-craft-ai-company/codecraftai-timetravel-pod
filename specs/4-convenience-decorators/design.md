@@ -3,14 +3,14 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/decorators.py`
+`source/packages/ccai/timetravel/pod/decorators.py`
 
 ### trace_portal Decorator
 
 ```python
 import functools
 import inspect
-from automojo.timetravel.pod.portal import TimeTravelPortal
+from ccai.timetravel.pod.portal import TimeTravelPortal
 
 
 def trace_portal(name: str):
@@ -38,8 +38,8 @@ def trace_portal(name: str):
 ### Gateway Factory
 
 ```python
-from automojo.timetravel.pod.gateway import TimeTravelGateway
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.gateway import TimeTravelGateway
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
 
 
 def create_gateway(

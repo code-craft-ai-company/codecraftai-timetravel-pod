@@ -7,8 +7,8 @@ import socket
 import time
 import unittest
 
-from automojo.timetravel.pod.remote.server import RemoteControlServer
-from automojo.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.remote.server import RemoteControlServer
+from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 
 def _send_command(host, port, command, params=None, token=None):

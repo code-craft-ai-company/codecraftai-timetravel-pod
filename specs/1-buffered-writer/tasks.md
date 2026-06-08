@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/bufferedwriter.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/bufferedwriter.py`
 - [x] 2. Define the `DEFAULT_BUFFER_SIZE` constant (64 KB)
 - [x] 3. Implement `BufferedTraceWriter.__init__` with stream, buffer, and max size
 - [x] 4. Implement `write()` with auto-flush on threshold
@@ -12,7 +12,7 @@
 
 ## Testing Tasks
 
-- [x] 8. Create test file `source/tests/automojo/timetravel/pod/test_bufferedwriter.py`
+- [x] 8. Create test file `source/tests/ccai/timetravel/pod/test_bufferedwriter.py`
 - [x] 9. Test: writing data smaller than buffer size does not trigger stream write
 - [x] 10. Test: writing data that exceeds buffer size triggers auto-flush
 - [x] 11. Test: `flush()` writes buffered data to stream immediately

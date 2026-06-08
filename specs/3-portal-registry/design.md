@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/portalregistry.py`
+`source/packages/ccai/timetravel/pod/portalregistry.py`
 
 ### Class Design
 

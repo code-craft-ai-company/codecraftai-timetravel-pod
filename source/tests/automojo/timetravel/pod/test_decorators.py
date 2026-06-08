@@ -5,9 +5,9 @@
 import asyncio
 import unittest
 
-from automojo.timetravel.pod.decorators import trace_portal
-from automojo.timetravel.pod.decorators import create_gateway
-from automojo.timetravel.pod.gateway import TimeTravelGateway
+from ccai.timetravel.pod.decorators import trace_portal
+from ccai.timetravel.pod.decorators import create_gateway
+from ccai.timetravel.pod.gateway import TimeTravelGateway
 
 
 class TestTracePortalDecorator(unittest.TestCase):

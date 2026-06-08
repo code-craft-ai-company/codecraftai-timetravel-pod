@@ -6,9 +6,9 @@ import os
 import tempfile
 import unittest
 
-from automojo.timetravel.pod.backends.registry import StreamBackendRegistry
-from automojo.timetravel.pod.backends.registry import create_default_registry
-from automojo.timetravel.pod.backends.filebackend import FileStreamBackend
+from ccai.timetravel.pod.backends.registry import StreamBackendRegistry
+from ccai.timetravel.pod.backends.registry import create_default_registry
+from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
 
 
 class TestStreamBackendRegistry(unittest.TestCase):

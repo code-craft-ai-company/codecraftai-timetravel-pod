@@ -8,7 +8,7 @@ import socket
 import threading
 import unittest
 
-from automojo.timetravel.pod.backends.tcpbackend import TcpStreamBackend
+from ccai.timetravel.pod.backends.tcpbackend import TcpStreamBackend
 
 
 class TcpTestServer:

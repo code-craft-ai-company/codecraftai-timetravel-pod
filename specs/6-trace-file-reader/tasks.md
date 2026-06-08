@@ -2,7 +2,7 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the module `source/packages/automojo/timetravel/pod/reader.py`
+- [x] 1. Create the module `source/packages/ccai/timetravel/pod/reader.py`
 - [x] 2. Implement `TraceFileReader` with source handling (path, list, BytesIO)
 - [x] 3. Implement `read_events()` generator
 - [x] 4. Implement `scan_headers()` generator
@@ -10,7 +10,7 @@
 
 ## Testing Tasks
 
-- [x] 6. Create test file `source/tests/automojo/timetravel/pod/test_reader.py`
+- [x] 6. Create test file `source/tests/ccai/timetravel/pod/test_reader.py`
 - [x] 7. Test: round-trip — serialize events to file, read back with reader, compare
 - [x] 8. Test: `scan_headers()` returns envelope data without full deserialization
 - [x] 9. Test: reading from `BytesIO` works correctly

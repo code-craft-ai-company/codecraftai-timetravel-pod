@@ -4,8 +4,8 @@
 
 import unittest
 
-from automojo.timetravel.pod.traceclock import TraceClock
-from automojo.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.traceclock import TraceClock
+from ccai.timetravel.pod.traceclock import get_trace_clock
 
 
 class TestTraceClock(unittest.TestCase):

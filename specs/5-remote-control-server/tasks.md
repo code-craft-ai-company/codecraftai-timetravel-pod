@@ -2,8 +2,8 @@
 
 ## Implementation Tasks
 
-- [x] 1. Create the `source/packages/automojo/timetravel/pod/remote/` package with `__init__.py`
-- [x] 2. Create the module `source/packages/automojo/timetravel/pod/remote/server.py`
+- [x] 1. Create the `source/packages/ccai/timetravel/pod/remote/` package with `__init__.py`
+- [x] 2. Create the module `source/packages/ccai/timetravel/pod/remote/server.py`
 - [x] 3. Implement `RemoteControlServer.__init__` with host, port, credential
 - [x] 4. Implement `start()` — socket setup, bind, listen, daemon thread creation
 - [x] 5. Implement `stop()` — set running flag, close socket, join thread
@@ -14,7 +14,7 @@
 
 ## Testing Tasks
 
-- [x] 10. Create test file `source/tests/automojo/timetravel/pod/remote/test_server.py`
+- [x] 10. Create test file `source/tests/ccai/timetravel/pod/remote/test_server.py`
 - [x] 11. Test: server starts and accepts TCP connections
 - [x] 12. Test: `list_portals` command returns portal data
 - [x] 13. Test: `activate_portal` command activates a portal

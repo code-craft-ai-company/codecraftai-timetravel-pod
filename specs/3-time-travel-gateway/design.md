@@ -3,17 +3,17 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/gateway.py`
+`source/packages/ccai/timetravel/pod/gateway.py`
 
 ### Class Design
 
 ```python
 import time
 import threading
-from automojo.timetravel.pod.traceclock import get_trace_clock
-from automojo.timetravel.pod.tracingstate import set_gateway_active
-from automojo.timetravel.pod.traceevents import GatewayStartEvent, GatewayStopEvent
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration, DEFAULT_TRACE_CONFIGURATION
+from ccai.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.tracingstate import set_gateway_active
+from ccai.timetravel.pod.traceevents import GatewayStartEvent, GatewayStopEvent
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration, DEFAULT_TRACE_CONFIGURATION
 
 
 class TimeTravelGateway:

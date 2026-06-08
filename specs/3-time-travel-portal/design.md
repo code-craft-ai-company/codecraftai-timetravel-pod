@@ -3,18 +3,18 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/portal.py`
+`source/packages/ccai/timetravel/pod/portal.py`
 
 ### Class Design
 
 ```python
 import threading
-from automojo.timetravel.pod.tracingstate import get_tracing_state, is_gateway_active
-from automojo.timetravel.pod.portalregistry import get_portal_registry
-from automojo.timetravel.pod.gateway import get_active_gateway
-from automojo.timetravel.pod.tracehookmanager import TraceHookManager
-from automojo.timetravel.pod.traceevents import PortalEnterEvent, PortalExitEvent
-from automojo.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.tracingstate import get_tracing_state, is_gateway_active
+from ccai.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.gateway import get_active_gateway
+from ccai.timetravel.pod.tracehookmanager import TraceHookManager
+from ccai.timetravel.pod.traceevents import PortalEnterEvent, PortalExitEvent
+from ccai.timetravel.pod.traceclock import get_trace_clock
 
 
 class TimeTravelPortal:

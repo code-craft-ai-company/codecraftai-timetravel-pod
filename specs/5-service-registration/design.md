@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/remote/registration.py`
+`source/packages/ccai/timetravel/pod/remote/registration.py`
 
 ### Class Design
 

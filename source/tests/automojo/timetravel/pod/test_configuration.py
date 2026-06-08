@@ -4,12 +4,12 @@
 
 import unittest
 
-from automojo.timetravel.pod.configuration import TimeTravelConfig
-from automojo.timetravel.pod.configuration import configure_timetravel
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
-from automojo.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
-from automojo.timetravel.pod.portalregistry import PortalRegistry
-from automojo.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.configuration import TimeTravelConfig
+from ccai.timetravel.pod.configuration import configure_timetravel
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
+from ccai.timetravel.pod.portalregistry import PortalRegistry
+from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 
 class TestTimeTravelConfig(unittest.TestCase):

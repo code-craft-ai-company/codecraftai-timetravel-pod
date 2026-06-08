@@ -1,5 +1,5 @@
 import asyncio
-from automojo.timetravel.pod.remote.mcpserver import McpServer
+from ccai.timetravel.pod.remote.mcpserver import McpServer
 
 async def test_tcp():
     server = McpServer()

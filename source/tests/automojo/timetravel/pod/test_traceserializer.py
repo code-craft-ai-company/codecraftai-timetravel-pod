@@ -4,19 +4,19 @@
 
 import unittest
 
-from automojo.timetravel.pod.traceserializer import TraceSerializer
-from automojo.timetravel.pod.traceserializer import TraceDeserializer
-from automojo.timetravel.pod.traceserializer import ENVELOPE_SIZE
-from automojo.timetravel.pod.traceevents import EventType
-from automojo.timetravel.pod.traceevents import CallEvent
-from automojo.timetravel.pod.traceevents import ReturnEvent
-from automojo.timetravel.pod.traceevents import LineEvent
-from automojo.timetravel.pod.traceevents import VariableSnapshotEvent
-from automojo.timetravel.pod.traceevents import ExceptionEvent
-from automojo.timetravel.pod.traceevents import PortalEnterEvent
-from automojo.timetravel.pod.traceevents import PortalExitEvent
-from automojo.timetravel.pod.traceevents import GatewayStartEvent
-from automojo.timetravel.pod.traceevents import GatewayStopEvent
+from ccai.timetravel.pod.traceserializer import TraceSerializer
+from ccai.timetravel.pod.traceserializer import TraceDeserializer
+from ccai.timetravel.pod.traceserializer import ENVELOPE_SIZE
+from ccai.timetravel.pod.traceevents import EventType
+from ccai.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.traceevents import ReturnEvent
+from ccai.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.traceevents import VariableSnapshotEvent
+from ccai.timetravel.pod.traceevents import ExceptionEvent
+from ccai.timetravel.pod.traceevents import PortalEnterEvent
+from ccai.timetravel.pod.traceevents import PortalExitEvent
+from ccai.timetravel.pod.traceevents import GatewayStartEvent
+from ccai.timetravel.pod.traceevents import GatewayStopEvent
 
 
 class TestEnvelopeSize(unittest.TestCase):

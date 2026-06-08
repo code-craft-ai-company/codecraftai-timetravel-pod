@@ -4,14 +4,14 @@
 
 import unittest
 
-from automojo.timetravel.pod.portal import TimeTravelPortal
-from automojo.timetravel.pod.gateway import TimeTravelGateway
-from automojo.timetravel.pod.portalregistry import get_portal_registry
-from automojo.timetravel.pod.tracingstate import get_tracing_state
-from automojo.timetravel.pod.tracingstate import is_gateway_active
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
-from automojo.timetravel.pod.traceevents import PortalEnterEvent
-from automojo.timetravel.pod.traceevents import PortalExitEvent
+from ccai.timetravel.pod.portal import TimeTravelPortal
+from ccai.timetravel.pod.gateway import TimeTravelGateway
+from ccai.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.tracingstate import get_tracing_state
+from ccai.timetravel.pod.tracingstate import is_gateway_active
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.traceevents import PortalEnterEvent
+from ccai.timetravel.pod.traceevents import PortalExitEvent
 
 
 class TestTimeTravelPortal(unittest.TestCase):

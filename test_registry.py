@@ -1,4 +1,4 @@
-from automojo.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 def test():
     r = get_portal_registry()

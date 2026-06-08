@@ -8,12 +8,12 @@ import tempfile
 import threading
 import unittest
 
-from automojo.timetravel.pod.reader import TraceFileReader
-from automojo.timetravel.pod.traceserializer import TraceSerializer
-from automojo.timetravel.pod.traceserializer import TraceDeserializer
-from automojo.timetravel.pod.traceevents import CallEvent
-from automojo.timetravel.pod.traceevents import ReturnEvent
-from automojo.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.reader import TraceFileReader
+from ccai.timetravel.pod.traceserializer import TraceSerializer
+from ccai.timetravel.pod.traceserializer import TraceDeserializer
+from ccai.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.traceevents import ReturnEvent
+from ccai.timetravel.pod.traceevents import LineEvent
 
 
 class TestTraceFileReader(unittest.TestCase):

@@ -4,17 +4,17 @@
 
 import unittest
 
-from automojo.timetravel.pod.traceevents import EventType
-from automojo.timetravel.pod.traceevents import TraceEvent
-from automojo.timetravel.pod.traceevents import CallEvent
-from automojo.timetravel.pod.traceevents import ReturnEvent
-from automojo.timetravel.pod.traceevents import LineEvent
-from automojo.timetravel.pod.traceevents import VariableSnapshotEvent
-from automojo.timetravel.pod.traceevents import ExceptionEvent
-from automojo.timetravel.pod.traceevents import PortalEnterEvent
-from automojo.timetravel.pod.traceevents import PortalExitEvent
-from automojo.timetravel.pod.traceevents import GatewayStartEvent
-from automojo.timetravel.pod.traceevents import GatewayStopEvent
+from ccai.timetravel.pod.traceevents import EventType
+from ccai.timetravel.pod.traceevents import TraceEvent
+from ccai.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.traceevents import ReturnEvent
+from ccai.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.traceevents import VariableSnapshotEvent
+from ccai.timetravel.pod.traceevents import ExceptionEvent
+from ccai.timetravel.pod.traceevents import PortalEnterEvent
+from ccai.timetravel.pod.traceevents import PortalExitEvent
+from ccai.timetravel.pod.traceevents import GatewayStartEvent
+from ccai.timetravel.pod.traceevents import GatewayStopEvent
 
 
 class TestEventType(unittest.TestCase):

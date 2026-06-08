@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/bufferedwriter.py`
+`source/packages/ccai/timetravel/pod/bufferedwriter.py`
 
 ### Class Design
 

@@ -6,8 +6,8 @@ import os
 import tempfile
 import unittest
 
-from automojo.timetravel.pod.backends.filebackend import FileStreamBackend
-from automojo.timetravel.pod.backends.filebackend import DEFAULT_MAX_FILE_SIZE
+from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
+from ccai.timetravel.pod.backends.filebackend import DEFAULT_MAX_FILE_SIZE
 
 
 class TestFileStreamBackend(unittest.TestCase):

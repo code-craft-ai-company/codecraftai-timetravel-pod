@@ -1,8 +1,8 @@
 ===============================
-Automation Mojo TimeTravel Pod
+Code Craft AI TimeTravel Pod
 ===============================
 
-The ``automojo-timetravel-pod`` is a Python package that provides time-travel debugging capabilities to applications. It introduces the concept of "named portals" that enable dynamic activation of different scopes of time-travel debugging. A developer places a portal in the form of a ``with`` scope into the code, associated with a uniquely named portal. When a thread enters the scope of the portal and the portal was activated by name early in the program's startup, time-travel debugging is activated for that thread for the duration of the portal scope. This mechanism allows applications to run at full performance when portals are inactive while still capturing debug traces at runtime — and portals can be turned on and off at any time without restarting the application.
+The ``codecraftai-timetravel-pod`` is a Python package that provides time-travel debugging capabilities to applications. It introduces the concept of "named portals" that enable dynamic activation of different scopes of time-travel debugging. A developer places a portal in the form of a ``with`` scope into the code, associated with a uniquely named portal. When a thread enters the scope of the portal and the portal was activated by name early in the program's startup, time-travel debugging is activated for that thread for the duration of the portal scope. This mechanism allows applications to run at full performance when portals are inactive while still capturing debug traces at runtime — and portals can be turned on and off at any time without restarting the application.
 
 Highlights
 ==========

@@ -4,13 +4,13 @@
 
 import unittest
 
-from automojo.timetravel.pod.gateway import TimeTravelGateway
-from automojo.timetravel.pod.gateway import get_active_gateway
-from automojo.timetravel.pod.tracingstate import is_gateway_active
-from automojo.timetravel.pod.traceclock import get_trace_clock
-from automojo.timetravel.pod.traceevents import GatewayStartEvent
-from automojo.timetravel.pod.traceevents import GatewayStopEvent
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.gateway import TimeTravelGateway
+from ccai.timetravel.pod.gateway import get_active_gateway
+from ccai.timetravel.pod.tracingstate import is_gateway_active
+from ccai.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.traceevents import GatewayStartEvent
+from ccai.timetravel.pod.traceevents import GatewayStopEvent
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
 
 
 class MockRecorder:

@@ -5,15 +5,15 @@
 import threading
 import unittest
 
-from automojo.timetravel.pod.tracehookmanager import TraceHookManager
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
-from automojo.timetravel.pod.traceclock import TraceClock
-from automojo.timetravel.pod.traceclock import get_trace_clock
-from automojo.timetravel.pod.traceevents import CallEvent
-from automojo.timetravel.pod.traceevents import ReturnEvent
-from automojo.timetravel.pod.traceevents import LineEvent
-from automojo.timetravel.pod.traceevents import VariableSnapshotEvent
-from automojo.timetravel.pod.traceevents import ExceptionEvent
+from ccai.timetravel.pod.tracehookmanager import TraceHookManager
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.traceclock import TraceClock
+from ccai.timetravel.pod.traceclock import get_trace_clock
+from ccai.timetravel.pod.traceevents import CallEvent
+from ccai.timetravel.pod.traceevents import ReturnEvent
+from ccai.timetravel.pod.traceevents import LineEvent
+from ccai.timetravel.pod.traceevents import VariableSnapshotEvent
+from ccai.timetravel.pod.traceevents import ExceptionEvent
 
 
 class TestTraceHookManager(unittest.TestCase):

@@ -5,10 +5,10 @@
 import threading
 import unittest
 
-from automojo.timetravel.pod.tracingstate import TracingState
-from automojo.timetravel.pod.tracingstate import get_tracing_state
-from automojo.timetravel.pod.tracingstate import is_gateway_active
-from automojo.timetravel.pod.tracingstate import set_gateway_active
+from ccai.timetravel.pod.tracingstate import TracingState
+from ccai.timetravel.pod.tracingstate import get_tracing_state
+from ccai.timetravel.pod.tracingstate import is_gateway_active
+from ccai.timetravel.pod.tracingstate import set_gateway_active
 
 
 class TestTracingState(unittest.TestCase):

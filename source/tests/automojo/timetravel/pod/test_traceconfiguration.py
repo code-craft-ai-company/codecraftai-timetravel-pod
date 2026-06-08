@@ -4,8 +4,8 @@
 
 import unittest
 
-from automojo.timetravel.pod.traceconfiguration import TraceConfiguration
-from automojo.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
+from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
+from ccai.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
 
 
 class TestTraceConfiguration(unittest.TestCase):

@@ -8,13 +8,13 @@ import tempfile
 import unittest
 import uuid
 
-from automojo.timetravel.pod.remote.mcpserver import McpServer
-from automojo.timetravel.pod.portalregistry import get_portal_registry
-from automojo.timetravel.pod.traceevents import VariableSnapshotEvent
-from automojo.timetravel.pod.traceserializer import TraceSerializer
-from automojo.timetravel.pod.bufferedwriter import BufferedTraceWriter
-from automojo.timetravel.pod.backends.filebackend import FileStreamBackend
-from automojo.timetravel.pod.tracerecorder import TraceRecorder
+from ccai.timetravel.pod.remote.mcpserver import McpServer
+from ccai.timetravel.pod.portalregistry import get_portal_registry
+from ccai.timetravel.pod.traceevents import VariableSnapshotEvent
+from ccai.timetravel.pod.traceserializer import TraceSerializer
+from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter
+from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
+from ccai.timetravel.pod.tracerecorder import TraceRecorder
 
 
 class TestMcpServerTools(unittest.IsolatedAsyncioTestCase):

@@ -3,7 +3,7 @@
 ## Technical Design
 
 ### Module Location
-`source/packages/automojo/timetravel/pod/tracingstate.py`
+`source/packages/ccai/timetravel/pod/tracingstate.py`
 
 ### Data Structure
 
