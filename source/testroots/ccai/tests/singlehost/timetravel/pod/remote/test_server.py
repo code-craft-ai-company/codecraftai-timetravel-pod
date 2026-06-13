@@ -13,7 +13,12 @@ from ccai.timetravel.pod.remote.server import RemoteControlServer
 from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 
-def _send_command(host: str, port: int, command: str, params: Optional[Dict[str, Any]] = None, token: Optional[str] = None) -> Dict[str, Any]:
+# The server now fails closed (denies when no credential is configured), so the
+# default setup configures this credential and _send_command sends it by default.
+_TEST_CREDENTIAL = "test-secret-credential"
+
+
+def _send_command(host: str, port: int, command: str, params: Optional[Dict[str, Any]] = None, token: Optional[str] = _TEST_CREDENTIAL) -> Dict[str, Any]:
     """
         Helper to send a JSON-lines command to the remote control server.
     """
@@ -51,7 +56,7 @@ def _setup_remote_control_server() -> Any:
         :returns: A tuple of (registry, server).
     """
     registry = get_portal_registry()
-    server = RemoteControlServer(host="127.0.0.1", port=0)
+    server = RemoteControlServer(host="127.0.0.1", port=0, credential=_TEST_CREDENTIAL)
     # Use port=0 to auto-assign; we need to find the actual port
     server._server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server._server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

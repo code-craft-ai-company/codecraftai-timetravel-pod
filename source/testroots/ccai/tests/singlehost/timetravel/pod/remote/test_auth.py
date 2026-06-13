@@ -27,24 +27,27 @@ def test_non_matching_credential_returns_false() -> None:
     return
 
 
-def test_none_expected_allows_all() -> None:
+def test_none_expected_denies() -> None:
     """
-        Verify None expected credential allows all (returns True).
+        Verify that with NO credential configured the server fails closed
+        (returns False) rather than allowing all -- the remote-control surface
+        can activate an eval()'d portal expression, so it must not be open.
     """
     result = verify_credential("anything", None)
 
-    assert result
+    assert not result
 
     return
 
 
-def test_none_expected_allows_none_provided() -> None:
+def test_none_expected_denies_none_provided() -> None:
     """
-        Verify None expected credential allows None provided (returns True).
+        Verify that with no credential configured, a None-provided credential is
+        also denied (fail closed).
     """
     result = verify_credential(None, None)
 
-    assert result
+    assert not result
 
     return
 

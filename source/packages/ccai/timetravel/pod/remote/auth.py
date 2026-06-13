@@ -23,8 +23,10 @@ def verify_credential(provided: Optional[str], expected: Optional[str]) -> bool:
         :returns: True if authentication passes, False otherwise.
     """
     if expected is None:
-        # No credential configured — allow all
-        rtnval = True
+        # Fail closed: with no credential configured the remote-control surface
+        # (which can activate a portal expression that is eval()'d) must NOT be
+        # open to all. Operators must configure a credential to enable it.
+        rtnval = False
         return rtnval
 
     if provided is None:
