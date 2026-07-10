@@ -23,6 +23,7 @@ from ccai.timetravel.pod.backends.registry import create_default_registry
 from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter
 from ccai.timetravel.pod.traceserializer import TraceSerializer
 from ccai.timetravel.pod.tracerecorder import TraceRecorder
+from ccai.timetravel.pod.safeexpression import evaluate_predicate
 
 
 class TimeTravelPortal:
@@ -102,12 +103,17 @@ class TimeTravelPortal:
         if expression is not None:
             try:
                 frame = sys._getframe(1)
-                result = eval(expression, frame.f_globals, frame.f_locals)
+                result = evaluate_predicate(
+                    expression=expression,
+                    global_ns=frame.f_globals,
+                    local_ns=frame.f_locals,
+                )
                 if not result:
                     rtnval = self
                     return rtnval
             except Exception:
-                # If evaluation fails, do not activate tracing
+                # A predicate that is unsafe, malformed, or raises at runtime
+                # fails closed: do not activate tracing.
                 rtnval = self
                 return rtnval
 

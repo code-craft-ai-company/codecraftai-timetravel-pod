@@ -7,6 +7,7 @@
 """
 
 import asyncio
+import hmac
 import logging
 import threading
 
@@ -27,6 +28,7 @@ import shutil
 from ccai.timetravel.pod.portalregistry import get_portal_registry
 from ccai.timetravel.pod.reader import TraceFileReader
 from ccai.timetravel.pod.timeline import TimelineBuilder
+from ccai.timetravel.pod.safeexpression import validate_expression
 
 
 logger = logging.getLogger(__name__)
@@ -39,13 +41,18 @@ class McpServer:
         Exposes tools: list_portals, activate_portal, deactivate_portal.
     """
 
-    def __init__(self, name: str = "timetravel-pod") -> None:
+    def __init__(self, name: str = "timetravel-pod",
+                 auth_token: Optional[str] = None) -> None:
         """
             Create an McpServer.
 
             :param name: The name of the MCP server.
+            :param auth_token: Optional shared-secret token; when set, every
+                               tool call must supply a matching ``auth_token``
+                               argument.
         """
         self._name = name
+        self._auth_token = auth_token
         self._server = Server(name)
         self._setup_tools()
         self._thread: Optional[threading.Thread] = None
@@ -56,6 +63,29 @@ class McpServer:
 
         self._cleanup_thread = threading.Thread(target=self._cleanup_sessions_loop, daemon=True)
         self._cleanup_thread.start()
+        return
+
+    def _require_auth(self, *, arguments: dict) -> None:
+        """
+            Enforce the shared-secret token on a tool call when configured.
+
+            When no token is configured the server is local-trust and this is
+            a no-op.  When a token is configured, every tool call must carry a
+            matching ``auth_token`` argument; the comparison is constant-time.
+
+            :param arguments: The tool-call arguments dict.
+
+            :raises: ValueError
+        """
+        if self._auth_token is None:
+            return
+
+        provided = arguments.get("auth_token")
+        if not isinstance(provided, str):
+            raise ValueError("Missing 'auth_token' argument")
+
+        if not hmac.compare_digest(provided, self._auth_token):
+            raise ValueError("Invalid 'auth_token'")
         return
 
     def _cleanup_sessions_loop(self) -> None:
@@ -233,6 +263,7 @@ class McpServer:
 
         @self._server.call_tool()
         async def handle_call_tool(name: str, arguments: dict) -> list:
+            self._require_auth(arguments=arguments)
             if name == "create_session":
                 timespan = arguments.get("timespan", 30)
                 try:
@@ -375,6 +406,12 @@ class McpServer:
                 if not portal_name:
                     raise ValueError("Missing 'name' argument")
                 expression = arguments.get("expression")
+                if expression is not None:
+                    # Reject an unsafe predicate at set-time so the caller gets
+                    # a clear error rather than a silent fail-closed at the
+                    # portal.  The portal also safe-evaluates as defense in
+                    # depth.
+                    validate_expression(expression=expression)
                 once = arguments.get("once", False)
                 capture_id = arguments.get("capture_id")
                 session_id = arguments.get("session_id")

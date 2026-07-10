@@ -29,7 +29,12 @@ class TimeTravelConfig:
         "_remote_enabled", "_remote_host", "_remote_port",
         "_remote_credential", "_service_url", "_service_credential",
         "_mcp_enabled", "_mcp_transport", "_mcp_host", "_mcp_port", "_mcp_pipe",
+        "_mcp_auth_token",
     )
+
+    # Host values treated as local-only; binding anything else exposes the
+    # MCP tool surface to the network and requires an auth token.
+    LOOPBACK_HOSTS = frozenset({"127.0.0.1", "::1", "localhost"})
 
     def __init__(
         self,
@@ -44,9 +49,10 @@ class TimeTravelConfig:
         service_credential: Optional[str] = None,
         mcp_enabled: bool = False,
         mcp_transport: str = "stdio",
-        mcp_host: str = "0.0.0.0",
+        mcp_host: str = "127.0.0.1",
         mcp_port: int = 9999,
         mcp_pipe: Optional[str] = None,
+        mcp_auth_token: Optional[str] = None,
     ) -> None:
         """
             Create a TimeTravelConfig.
@@ -65,6 +71,9 @@ class TimeTravelConfig:
             :param mcp_host: Host for the MCP server.
             :param mcp_port: Port for the MCP server.
             :param mcp_pipe: Named pipe (Unix socket path) for the MCP server.
+            :param mcp_auth_token: Shared-secret token required on MCP tool
+                                   calls; required when binding a non-loopback
+                                   host.
         """
         if active_portals is not None:
             self._active_portals = active_portals
@@ -88,6 +97,7 @@ class TimeTravelConfig:
         self._mcp_host = mcp_host
         self._mcp_port = mcp_port
         self._mcp_pipe = mcp_pipe
+        self._mcp_auth_token = mcp_auth_token
         return
 
     @property
@@ -202,6 +212,14 @@ class TimeTravelConfig:
         rtnval = self._mcp_pipe
         return rtnval
 
+    @property
+    def mcp_auth_token(self) -> Optional[str]:
+        """
+            Shared-secret token required on MCP tool calls, or None.
+        """
+        rtnval = self._mcp_auth_token
+        return rtnval
+
     def as_dict(self) -> dict:
         """
             Serialize to a dictionary.
@@ -249,9 +267,10 @@ class TimeTravelConfig:
             remote_port=data.get("remote_port", 9876),
             mcp_enabled=data.get("mcp_enabled", False),
             mcp_transport=data.get("mcp_transport", "stdio"),
-            mcp_host=data.get("mcp_host", "0.0.0.0"),
+            mcp_host=data.get("mcp_host", "127.0.0.1"),
             mcp_port=data.get("mcp_port", 9999),
             mcp_pipe=data.get("mcp_pipe"),
+            mcp_auth_token=data.get("mcp_auth_token"),
         )
         return rtnval
 
@@ -292,7 +311,26 @@ def configure_timetravel(config: TimeTravelConfig) -> dict:
 
     # Start MCP server (if enabled)
     if config.mcp_enabled:
-        mcp_server = McpServer()
+        # Fail closed: binding the MCP tool surface to a non-loopback host
+        # exposes activate_portal (and its predicate evaluation) to the
+        # network, so a shared-secret token is required before that bind is
+        # allowed.  Loopback and stdio/pipe transports remain local-trust.
+        if config.mcp_transport == "tcp":
+            is_loopback = config.mcp_host in TimeTravelConfig.LOOPBACK_HOSTS
+            if not is_loopback and config.mcp_auth_token is None:
+                err_msg_lines = [
+                    "Refusing to bind the MCP server to a non-loopback host "
+                    "without an auth token."
+                ]
+                err_msg_lines.append("MCP_HOST: {}".format(config.mcp_host))
+                err_msg_lines.append(
+                    "Set 'mcp_auth_token' to enable remote MCP access, or bind "
+                    "a loopback host."
+                )
+                err_msg = "\n".join(err_msg_lines)
+                raise ValueError(err_msg)
+
+        mcp_server = McpServer(auth_token=config.mcp_auth_token)
         if config.mcp_transport == "tcp":
             mcp_server.start_background_tcp(config.mcp_host, config.mcp_port)
         elif config.mcp_transport == "pipe" and config.mcp_pipe:
