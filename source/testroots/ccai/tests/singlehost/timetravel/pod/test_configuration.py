@@ -38,7 +38,11 @@ def test_defaults_are_correct() -> None:
     assert config.service_credential is None
     assert not config.mcp_enabled
     assert config.mcp_transport == "stdio"
-    assert config.mcp_host == "0.0.0.0"
+    # Loopback, NOT 0.0.0.0.  This is the MCP control server's BIND
+    # address, and it was deliberately narrowed by the commit "Shut down
+    # the timetravel-pod RCE surface".  Restoring 0.0.0.0 here would
+    # re-expose that surface on every interface by default.
+    assert config.mcp_host == "127.0.0.1"
     assert config.mcp_port == 9999
     assert config.mcp_pipe is None
 
