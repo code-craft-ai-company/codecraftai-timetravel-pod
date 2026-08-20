@@ -1,0 +1,41 @@
+{
+    "version": "2",
+    "title": "Test Job",
+    "runid": "96a26b6d-adf3-4925-a218-6625d197ab53",
+    "build": {
+        "release": "(unknown)",
+        "branch": "(unknown)",
+        "build": "(unknown)",
+        "flavor": "(unknown)",
+        "url": "(unknown)"
+    },
+    "pipeline": {
+        "id": "(unknown)",
+        "name": "(unknown)",
+        "instance": "(unknown)"
+    },
+    "job": {
+        "id": "(unknown)",
+        "initiator": "(unknown)",
+        "label": "(unknown)",
+        "name": "Test Job",
+        "owner": "(unknown)",
+        "type": "(unknown)",
+        "venue": "(unknown)",
+        "seed": "97b78a72-05fc-4356-85e3-80e2215f761d",
+        "tag": "(unknown)"
+    },
+    "start": "2026-07-30T23:13:35.973840",
+    "stop": "2026-07-30 23:14:06.059823",
+    "result": "PASSED",
+    "apod": null,
+    "totals": null,
+    "running": {},
+    "detail": {
+        "errors": 0,
+        "failed": 0,
+        "skipped": 0,
+        "passed": 172,
+        "total": 172
+    }
+}

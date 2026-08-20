@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "codecraftai-timetravel-pod"
 description = "Code Craft AI - Time Travel Pod"
-version = "0.0.1"
+version = "1.0.0"
 authors = ["Myron Walker <myron.walker@gmail.com>"]
 readme = "README.rst"
 license = "LicenseRef-CodeCraftAI-Dual-License"
@@ -22,7 +22,13 @@ anyio = "^4.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.2"
-codecraftai-testbase = { git = "https://github.com/code-craft-ai-company/codecraftai-testbase.git", branch = "main" }
+codecraftai-testbase = { version = "<2.0.0", source = "codecraftai" }
+
+
+[[tool.poetry.source]]
+name = "codecraftai"
+url = "https://code-craft.ai/licensed-repository/simple/"
+priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]
