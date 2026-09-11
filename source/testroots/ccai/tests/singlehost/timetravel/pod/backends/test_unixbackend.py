@@ -6,8 +6,11 @@
 
 import os
 import socket
+import sys
 import tempfile
 import threading
+
+from ccai.errors.exceptions import SkipError
 
 from ccai.timetravel.pod.backends.unixbackend import UnixStreamBackend
 
@@ -68,6 +71,21 @@ class UnixTestServer:
         return
 
 
+def _require_unix_sockets() -> None:
+    """
+        Skip the calling test when the platform does not provide Unix domain
+        sockets.  The ``socket`` module only exposes ``AF_UNIX`` where the
+        operating system supports it (it is absent on Windows), so the tests in
+        this module are a condition of the environment rather than a defect.
+
+        :raises: SkipError
+    """
+    if not hasattr(socket, "AF_UNIX"):
+        reason = "Unix domain sockets (socket.AF_UNIX) are not available on platform '{}'.".format(sys.platform)
+        raise SkipError(reason)
+    return
+
+
 def _setup_server() -> tuple:
     """
         Replicate the original ``setUp`` per test: create a temporary
@@ -75,7 +93,10 @@ def _setup_server() -> tuple:
         test server.
 
         :returns: A tuple of ``(temp_dir, socket_path, server)``.
+        :raises: SkipError
     """
+    _require_unix_sockets()
+
     temp_dir = tempfile.mkdtemp()
     socket_path = os.path.join(temp_dir, "test.sock")
     server = UnixTestServer(socket_path)
@@ -168,9 +189,11 @@ def test_connection_to_nonexistent_socket_raises_error() -> None:
     temp_dir, socket_path, server = _setup_server()
 
     try:
+        nonexistent_socket_path = os.path.join(temp_dir, "nonexistent_test_socket.sock")
+
         raised = False
         try:
-            UnixStreamBackend(socket_path="/tmp/nonexistent_test_socket.sock")
+            UnixStreamBackend(socket_path=nonexistent_socket_path)
         except OSError:
             raised = True
 

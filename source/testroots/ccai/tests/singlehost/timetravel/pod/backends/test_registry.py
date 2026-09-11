@@ -3,6 +3,7 @@
 """
 
 import os
+import pathlib
 import tempfile
 
 from ccai.timetravel.pod.backends.registry import StreamBackendRegistry
@@ -95,7 +96,11 @@ def test_file_scheme_creates_file_backend() -> None:
 
     temp_dir = tempfile.mkdtemp()
     file_path = os.path.join(temp_dir, "test_trace.bin")
-    uri = "file://{}".format(file_path)
+
+    # Build the URI with 'as_uri' rather than string formatting so the result is
+    # a well-formed 'file:///...' URI on every platform, including Windows drive
+    # paths such as 'C:\Temp\test_trace.bin' -> 'file:///C:/Temp/test_trace.bin'.
+    uri = pathlib.Path(file_path).as_uri()
 
     backend = registry.create_backend(uri)
 
