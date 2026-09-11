@@ -7,6 +7,7 @@
 """
 
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
 from ccai.timetravel.pod.backends.tcpbackend import TcpStreamBackend
@@ -71,11 +72,18 @@ def _create_file_backend(parsed) -> FileStreamBackend:
     """
         Factory function for creating a FileStreamBackend from a parsed URI.
 
+        The URI path is converted back into a native filesystem path with
+        :func:`urllib.request.url2pathname` so that a URI produced by
+        :meth:`pathlib.Path.as_uri` round-trips on every platform.  On Windows
+        ``file:///C:/traces/trace.bin`` parses to the path ``/C:/traces/trace.bin``,
+        which is not a usable filesystem path until the leading slash is removed
+        and the separators are converted.
+
         :param parsed: A urllib.parse.ParseResult.
 
         :returns: A FileStreamBackend instance.
     """
-    file_path = parsed.path
+    file_path = url2pathname(parsed.path)
     rtnval = FileStreamBackend(file_path=file_path)
     return rtnval
 

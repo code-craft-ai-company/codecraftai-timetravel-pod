@@ -5,11 +5,15 @@
     serialized trace data over a Unix domain socket with reconnection support.
 """
 
-import socket
-import time
 import logging
+import os
+import socket
+import sys
+import time
 
 from typing import Optional
+
+from ccai.errors.exceptions import ConfigurationError
 
 
 logger = logging.getLogger(__name__)
@@ -43,6 +47,22 @@ class UnixStreamBackend:
         self._max_retries = max_retries
         self._retry_backoff = retry_backoff
         self._socket: Optional[socket.socket] = None
+
+        # Unix domain sockets are only available where the 'socket' module exposes
+        # 'AF_UNIX'.  Check this here, at the point of use, so that a 'unix://'
+        # backend configured on a platform without them (such as Windows) fails
+        # with a clear message rather than an AttributeError from deep inside the
+        # connect path.
+        if not hasattr(socket, "AF_UNIX"):
+            errmsg_lines = [
+                "Unix domain sockets are not supported on this platform.",
+                f"    platform: {sys.platform}",
+                f"    socket_path: {socket_path}",
+                "Use a 'file://' or 'tcp://' stream backend on this platform instead.",
+            ]
+            errmsg = os.linesep.join(errmsg_lines)
+            raise ConfigurationError(errmsg)
+
         self._connect()
         return
 
