@@ -132,6 +132,8 @@ class UnixStreamBackend:
             try:
                 self._socket.close()
             except OSError:
+                # Best-effort close; the socket is discarded either way and a failure to close it
+                # must not prevent the backend from reconnecting or shutting down.
                 pass
             self._socket = None
         return

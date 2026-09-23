@@ -11,8 +11,6 @@ import logging
 import urllib.request
 import uuid
 
-from typing import Optional
-
 
 logger = logging.getLogger(__name__)
 

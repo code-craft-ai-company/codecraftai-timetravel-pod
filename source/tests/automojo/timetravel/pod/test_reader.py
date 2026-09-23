@@ -10,7 +10,6 @@ import unittest
 
 from ccai.timetravel.pod.reader import TraceFileReader
 from ccai.timetravel.pod.traceserializer import TraceSerializer
-from ccai.timetravel.pod.traceserializer import TraceDeserializer
 from ccai.timetravel.pod.traceevents import CallEvent
 from ccai.timetravel.pod.traceevents import ReturnEvent
 from ccai.timetravel.pod.traceevents import LineEvent

@@ -9,7 +9,6 @@ from ccai.timetravel.pod.portalfilter import filter_by_portal
 from ccai.timetravel.pod.traceevents import PortalEnterEvent
 from ccai.timetravel.pod.traceevents import PortalExitEvent
 from ccai.timetravel.pod.traceevents import LineEvent
-from ccai.timetravel.pod.traceevents import CallEvent
 
 
 class TestFilterByPortal(unittest.TestCase):

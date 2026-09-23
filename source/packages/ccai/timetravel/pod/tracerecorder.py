@@ -26,18 +26,15 @@ class TraceRecorder(ABC):
 
             :param event: The trace event to record.
         """
-        ...
 
     @abstractmethod
     def flush(self) -> None:
         """
             Ensure all buffered data is written to the underlying stream.
         """
-        ...
 
     @abstractmethod
     def close(self) -> None:
         """
             Finalize the recorder and release held resources.
         """
-        ...

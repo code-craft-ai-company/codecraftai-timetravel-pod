@@ -4,7 +4,6 @@
 
 import json
 import socket
-import time
 import unittest
 
 from ccai.timetravel.pod.remote.server import RemoteControlServer

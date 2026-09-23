@@ -7,7 +7,6 @@ import unittest
 
 from ccai.timetravel.pod.tracehookmanager import TraceHookManager
 from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
-from ccai.timetravel.pod.traceclock import TraceClock
 from ccai.timetravel.pod.traceclock import get_trace_clock
 from ccai.timetravel.pod.traceevents import CallEvent
 from ccai.timetravel.pod.traceevents import ReturnEvent
@@ -50,7 +49,7 @@ class TestTraceHookManager(unittest.TestCase):
             return 42
 
         manager.install()
-        result = simple_function()
+        simple_function()
         manager.uninstall()
 
         call_events = [e for e in self._recorded_events if isinstance(e, CallEvent)]
@@ -169,6 +168,7 @@ class TestTraceHookManager(unittest.TestCase):
         try:
             failing_function()
         except ValueError:
+            # Expected: the test only needs the trace hook to observe the raised exception.
             pass
         manager.uninstall()
 

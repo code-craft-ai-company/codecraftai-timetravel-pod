@@ -2,8 +2,6 @@
     Tests for the F1.4 Buffered Writer module.
 """
 
-import io
-
 from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter
 from ccai.timetravel.pod.bufferedwriter import DEFAULT_BUFFER_SIZE
 

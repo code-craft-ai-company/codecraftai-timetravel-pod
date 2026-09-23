@@ -499,22 +499,24 @@ class McpServer:
         fd_in = os.dup(sys.stdin.fileno())
         fd_out = os.dup(sys.stdout.fileno())
 
-        stdin_stream = anyio.wrap_file(TextIOWrapper(open(fd_in, 'rb', buffering=0), encoding="utf-8"))
-        stdout_stream = anyio.wrap_file(TextIOWrapper(open(fd_out, 'wb', buffering=0), encoding="utf-8"))
+        # The 'with' block closes the duplicated descriptors once the server has finished with them.
+        with open(fd_in, 'rb', buffering=0) as raw_stdin, open(fd_out, 'wb', buffering=0) as raw_stdout:
+            stdin_stream = anyio.wrap_file(TextIOWrapper(raw_stdin, encoding="utf-8"))
+            stdout_stream = anyio.wrap_file(TextIOWrapper(raw_stdout, encoding="utf-8"))
 
-        try:
-            async with mcp.server.stdio.stdio_server(stdin_stream, stdout_stream) as (read_stream, write_stream):
-                # We would run this, but we need a way to stop it cleanly if requested
-                # Since stdio_server blocks and consumes stdin, it usually runs until EOF
-                await self._server.run(
-                    read_stream,
-                    write_stream,
-                    self._server.create_initialization_options()
-                )
-        finally:
-            # Reassign original stdout/stdin, preventing it from remaining closed in the main thread
-            sys.stdout = original_stdout
-            sys.stdin = original_stdin
+            try:
+                async with mcp.server.stdio.stdio_server(stdin_stream, stdout_stream) as (read_stream, write_stream):
+                    # We would run this, but we need a way to stop it cleanly if requested
+                    # Since stdio_server blocks and consumes stdin, it usually runs until EOF
+                    await self._server.run(
+                        read_stream,
+                        write_stream,
+                        self._server.create_initialization_options()
+                    )
+            finally:
+                # Reassign original stdout/stdin, preventing it from remaining closed in the main thread
+                sys.stdout = original_stdout
+                sys.stdin = original_stdin
 
         return
 
@@ -544,7 +546,6 @@ class McpServer:
         """
         import anyio
         from anyio.streams.memory import MemoryObjectReceiveStream, MemoryObjectSendStream
-        import json
         import mcp.types as types
         from mcp.shared.message import SessionMessage
 
@@ -567,6 +568,8 @@ class McpServer:
                         except json.JSONDecodeError:
                             continue
                 except anyio.ClosedResourceError:
+                    # The session closed its receive stream because the MCP session ended; there is
+                    # nothing more to forward, so reading from the socket simply stops.
                     pass
                 finally:
                     producer_read.close()
@@ -634,7 +637,6 @@ class McpServer:
         """
         import os
         import anyio
-        import json
         import mcp.types as types
         from mcp.shared.message import SessionMessage
 
@@ -643,6 +645,8 @@ class McpServer:
             try:
                 os.remove(pipe_name)
             except OSError:
+                # Best-effort removal of a stale socket file; if it cannot be removed, the bind in
+                # 'start_unix_server' below fails and reports the problem.
                 pass
 
         async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
@@ -664,6 +668,8 @@ class McpServer:
                         except json.JSONDecodeError:
                             continue
                 except anyio.ClosedResourceError:
+                    # The session closed its receive stream because the MCP session ended; there is
+                    # nothing more to forward, so reading from the socket simply stops.
                     pass
                 finally:
                     producer_read.close()
@@ -715,7 +721,6 @@ class McpServer:
             self._running = False
             # Can't easily cancel stdin reading without closing stdin, but we signal
             # the thread to exit if it can.
-            pass
         if self._thread is not None:
             # wait a short period since this blocks on standard in.
             self._thread.join(timeout=0.1)

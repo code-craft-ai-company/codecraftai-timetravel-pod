@@ -2,9 +2,6 @@
     Tests for the F2 portal expression evaluation and once-flag behaviour.
 """
 
-import threading
-import sys
-
 from ccai.timetravel.pod.portal import TimeTravelPortal
 from ccai.timetravel.pod.portalregistry import get_portal_registry
 from ccai.timetravel.pod.portalregistry import PortalRegistry

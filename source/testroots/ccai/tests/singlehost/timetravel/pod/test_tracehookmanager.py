@@ -91,7 +91,7 @@ def test_install_and_call_produces_call_and_return_events() -> None:
             return 42
 
         manager.install()
-        result = simple_function()
+        simple_function()
         manager.uninstall()
 
         call_events = [e for e in fixture.recorded_events if isinstance(e, CallEvent)]
@@ -234,6 +234,7 @@ def test_exceptions_produce_exception_events() -> None:
         try:
             failing_function()
         except ValueError:
+            # Expected: the test only needs the trace hook to observe the raised exception.
             pass
         manager.uninstall()
 

@@ -8,7 +8,7 @@ import json
 import threading
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from typing import Any, Tuple
+from typing import Tuple
 
 from ccai.timetravel.pod.remote.heartbeat import HeartbeatSender
 from ccai.timetravel.pod.remote.heartbeat import DEFAULT_HEARTBEAT_INTERVAL

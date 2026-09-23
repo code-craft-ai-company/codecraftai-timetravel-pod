@@ -5,16 +5,9 @@
 import asyncio
 import json
 import os
-import tempfile
-import uuid
 
 from ccai.timetravel.pod.remote.mcpserver import McpServer
 from ccai.timetravel.pod.portalregistry import get_portal_registry
-from ccai.timetravel.pod.traceevents import VariableSnapshotEvent
-from ccai.timetravel.pod.traceserializer import TraceSerializer
-from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter
-from ccai.timetravel.pod.backends.filebackend import FileStreamBackend
-from ccai.timetravel.pod.tracerecorder import TraceRecorder
 
 
 def _setup() -> McpServer:

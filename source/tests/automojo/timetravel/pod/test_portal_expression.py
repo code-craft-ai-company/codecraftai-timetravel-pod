@@ -1,6 +1,4 @@
 import unittest
-import threading
-import sys
 
 from ccai.timetravel.pod.portal import TimeTravelPortal
 from ccai.timetravel.pod.portalregistry import get_portal_registry

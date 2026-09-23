@@ -2,7 +2,6 @@
     Tests for the F1.4 Buffered Writer module.
 """
 
-import io
 import unittest
 
 from ccai.timetravel.pod.bufferedwriter import BufferedTraceWriter

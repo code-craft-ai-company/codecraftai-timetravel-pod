@@ -8,7 +8,6 @@ from ccai.timetravel.pod.configuration import TimeTravelConfig
 from ccai.timetravel.pod.configuration import configure_timetravel
 from ccai.timetravel.pod.traceconfiguration import TraceConfiguration
 from ccai.timetravel.pod.traceconfiguration import DEFAULT_TRACE_CONFIGURATION
-from ccai.timetravel.pod.portalregistry import PortalRegistry
 from ccai.timetravel.pod.portalregistry import get_portal_registry
 
 

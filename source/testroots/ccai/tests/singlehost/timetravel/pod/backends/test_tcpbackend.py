@@ -53,6 +53,8 @@ class TcpTestServer:
                     break
                 self.received_data.extend(chunk)
         except OSError:
+            # The test server stops reading when the connection drops or the server is stopped; the
+            # tests verify the data received up to that point.
             pass
         finally:
             conn.close()
