@@ -24,7 +24,7 @@ Issues = "https://github.com/code-craft-ai-company/codecraftai-timetravel-pod/is
 
 [dependency-groups]
 dev = [
-    "codecraftai-testbase<2.0.0",
+    "codecraftai-testbase>=1.0.0,<2.0.0",
 ]
 
 [tool.poetry]
@@ -32,22 +32,6 @@ packages = [{include="ccai", from="source/packages"}]
 # The README only marks the shared 'ccai' namespace directory in the source tree. It stays out of the
 # wheel because several codecraftai packages install into that directory and a file there collides.
 exclude = ["source/packages/ccai/README.md"]
-
-[tool.poetry.group.dev.dependencies]
-codecraftai-testbase = {source = "codecraftai"}
-
-[[tool.poetry.source]]
-name = "codecraftai"
-url = "https://code-craft.ai/licensed-repository/simple/"
-priority = "supplemental"
-
-[[tool.uv.index]]
-# Same licensed index as [[tool.poetry.source]]. Listed before PyPI so that
-# codecraftai-* packages (direct and transitive) resolve from it; everything
-# else falls through to PyPI. Credentials: UV_INDEX_CODECRAFTAI_USERNAME /
-# UV_INDEX_CODECRAFTAI_PASSWORD, or `uv auth login`.
-name = "codecraftai"
-url = "https://code-craft.ai/licensed-repository/simple/"
 
 [tool.ruff.lint]
 # Deliberately narrow.  This gate exists for one reason: a bare `except:`
